@@ -1,0 +1,69 @@
+{
+ /*id: "system.login",
+ /*path: "/public/modules/system.login/",*/
+ 
+ required: {
+  templastes: ["demo-template"]
+ },
+
+ actions: {
+  "authenticate": function(param1, param2, etc) {
+   return "bleh";
+  }
+ },
+
+ resources: {
+  templates: {
+   "demo-template": "demo-template.html",
+
+   "lazy-demo": function(query) {
+    return "<h1>Oops!</h1>"
+   }
+
+    "crazy-shit": function(query) {
+    return "<h1>Oops!</h1>"
+   },
+  },
+
+  datasets: {
+   "countries": function() {
+    return db.countries.get_all();
+   }
+
+    "countries": {},
+   "countries": [],
+  },
+
+  styles: {
+   "fashion-demo": "/fashion-demo.css",
+
+   "fashion-demo": function() {
+    return minify("css");
+   }
+  },
+
+  components: {
+   "demo-ui": "/demo-ui.js",
+
+   "demo-ui": function() {
+    function demo_ui(argument) {
+     this.container = document.createElement("div");
+    }
+
+    demo_ui.prototype = {
+     constructor: demo_ui,
+
+     show: function() {
+      this.container.style.display = "block";
+     },
+
+     hide: function() {
+      this.container.style.display = "hidden";
+     }
+    };
+
+    return demo_ui;
+   }
+  },
+ }
+}

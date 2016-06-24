@@ -1,0 +1,21 @@
+section[name=authentication] {
+  height: 100%;
+}
+section[name=authentication] .grid {
+  height: 100%;
+}
+section[name=authentication] .title {
+  margin-bottom: 40px;
+}
+section[name=authentication] .column {
+  max-width: 350px;
+}
+section[name=authentication] .options {
+  margin-top: 60px;
+}
+section[name=authentication] .options a {
+  font-size: 13px;
+}
+section[name=authentication] .options .divider {
+  margin: 5px auto;
+}
