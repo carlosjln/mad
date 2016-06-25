@@ -1,9 +1,0 @@
-{
-  "name": "MAD",
-  "version": "1.0.0",
-  "description": "Modular Application Development",
-  "main": "server.js",
-  "repository": "",
-  "author": "Carlos J. López",
-  "dependencies": {}
-}

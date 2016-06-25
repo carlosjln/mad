@@ -9,9 +9,9 @@
 var FS = require('fs');
 var Path = require('path');
 
-var IO = require('./lib/io');
-var Utils = require('./lib/utilities');
-var Module = require('./lib/module');
+var IO = require('./libs/io');
+var Utils = require('./libs/utilities');
+var Module = require('./libs/module');
 
 // SHARED VARIABLES
 var app_settings = {
