@@ -44,16 +44,15 @@ mad.handle = function( request, response ){
 	var url_parts = url.replace(match_module_url,"").split("/");
 	var module_name = url_parts[0];
 	
-	var method = request.method.toLowerCase();
-	
     var module = module_collection[ module_name ];
     var reply = null;
 
     if( module ) {
-        reply = module.get_api_data();
+        reply = module.get_model();
     }
 
     /*
+    var method = request.method.toLowerCase();
 	if ( method === "get" ) {
 	} else if( method === "post" ) {
     }
