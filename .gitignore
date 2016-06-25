@@ -13,4 +13,4 @@ node_modules
 .npm
 
 # Project specific
-#!/examples/**/node_modules
+!/examples/**/node_modules
