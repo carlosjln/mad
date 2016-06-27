@@ -20,3 +20,21 @@ gulp.task( 'update-examples', function () {
         console.error( 'Could not copy directory [' + source + ']', exception );
     }
 });
+
+gulp.task( 'build-nodejs', function () {
+    var source = './src/backend/nodejs';
+    var target = './build/backend/nodejs';
+
+    try {
+        fs.emptyDirSync( target );
+    } catch ( exception ) {
+        console.error( 'Could not empty directory [' + target + ']', exception );
+        return;
+    }
+
+    try {
+        fs.copySync( source, target, { clobber: true } )
+    } catch ( err ) {
+        console.error( 'Could not copy directory [' + source + ']', exception );
+    }
+});
