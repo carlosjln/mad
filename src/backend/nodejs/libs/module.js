@@ -83,7 +83,7 @@ module.exports = ( function () {
         var namespace = ( settings.namespace || parent_directories.join( '.' ) ); // should replace all non alphanumeric characters
         var id = ( settings.id || directory ).replace( match_dot, '_' );
 
-        if ( namespace ) {
+        if( namespace ) {
             // Should: this be full id path?
             id = namespace + '.' + id;
         }
@@ -106,7 +106,7 @@ module.exports = ( function () {
         var key;
         var file;
 
-        while ( i-- ) {
+        while( i-- ) {
             file = files[ i ];
             key = file.replace( match_file_extension, '' );
 

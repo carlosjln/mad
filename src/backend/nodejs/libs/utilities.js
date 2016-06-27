@@ -1,6 +1,6 @@
 // OBJECT TYPE DETECTION
 // TAKEN FROM https://github.com/carlosjln/epic
-var get_type = (function() {
+var get_type = ( function () {
     var core_types = {
         '[object Boolean]': 'boolean',
         '[object Number]': 'number',
@@ -15,15 +15,15 @@ var get_type = (function() {
 
     var to_string = core_types.toString;
 
-    function type(object) {
-        var typeof_object = typeof(object);
+    function type( object ) {
+        var typeof_object = typeof ( object );
 
-        if (object === null) {
+        if( object === null ) {
             return 'null';
         }
 
-        if (typeof_object === 'object' || typeof_object === 'function') {
-            return core_types[to_string.call(object)] || 'object';
+        if( typeof_object === 'object' || typeof_object === 'function' ) {
+            return core_types[ to_string.call( object ) ] || 'object';
         }
 
         return typeof_object;
@@ -38,34 +38,34 @@ function copy( source, target, undefined_only ) {
 	var new_value;
 	var current_value;
 	var source_type = get_type( source );
-	
+
 	undefined_only = undefined_only === true;
 
 	// HANDLE DATE
 	if( source_type === "date" ) {
 		target = new Date();
 		target.setTime( source.getTime() );
-		
+
 		return target;
 	}
-    
+
 	// HANDLE ARRAY
 	if( source_type === "array" && undefined_only === false ) {
 		var index = source.length;
-		
+
 		target = target === undefined ? [] : target;
-		
+
 		while( index-- ) {
-			target[ index ] = copy( source[ index ], target[ index ], undefined_only );	
+			target[ index ] = copy( source[ index ], target[ index ], undefined_only );
 		}
-        
+
 		return target;
 	}
-    
+
 	// HANDLE OBJECTS
 	if( source_type === "object" ) {
 		target = target === undefined ? {} : target;
-		
+
 		for( var attribute in source ) {
 			if( source.hasOwnProperty( attribute ) ) {
 				new_value = source[ attribute ];
@@ -74,12 +74,12 @@ function copy( source, target, undefined_only ) {
 				target[ attribute ] = copy( new_value, current_value, undefined_only );
 			}
 		}
-        
+
 		return target;
 	}
-    
+
 	// ALSO HANDLES PRIMITIVE TYPES: boolean, number, string, function, error
-	return undefined_only ? (target !== undefined ? target : source) : source;
+	return undefined_only ? ( target !== undefined ? target : source ) : source;
 }
 
 module.exports = {
