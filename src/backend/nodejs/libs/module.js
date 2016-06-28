@@ -7,9 +7,6 @@ var copy = Utils.copy;
 
 require( './Prototypes' );
 
-// RESOURCE MINIFIERS
-
-
 module.exports = ( function () {
     // ALIASES
     var get_type = Utils.get_type;

@@ -7,7 +7,7 @@ gulp.task( 'update-examples', function () {
     var source = '.\\src\\backend\\nodejs';
     var target = '.\\examples\\nodejs\\node_modules\\mad';
 
-    // BACK END FILES
+    // BACKEND FILES
     try {
         fs.emptyDirSync( target );
     } catch ( exception ) {
@@ -21,7 +21,7 @@ gulp.task( 'update-examples', function () {
         console.error( 'Could not copy directory [' + source + ']', exception );
     }
 
-    // FRONT END FILES
+    // FRONTEND FILES
     try {
         fs.copySync( '.\\src\\javascript', '.\\examples\\nodejs\\public\\resources\\scripts\\libraries\\mad-js', { clobber: true } )
     } catch ( err ) {

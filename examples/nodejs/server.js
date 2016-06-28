@@ -17,8 +17,6 @@ mad.setup( {
     modules_directory: "/public/modules/"
 });
 
-// mad.modules.autodetect();
-
 app.get( '/mad/*', function ( request, response ) {
     mad.handle( request, response );
 });
