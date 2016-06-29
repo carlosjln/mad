@@ -13,6 +13,8 @@ var IO = require( './libs/io' );
 var Utils = require( './libs/utilities' );
 var Module = require( './libs/module' );
 
+var ResourceProvider = require( './libs/resource_provider' );
+
 // SHARED VARIABLES
 var app_settings = {
 	path: null,
@@ -22,7 +24,13 @@ var modules_path = '';
 var module_collection = {};
 
 var match_module_url = /^\/mad\/module\//ig;
-var match_namespace_joints = /(\.)+/g;
+
+var match_valid_id = /^[a-z0-9-_]+$/i;
+var match_valid_namespace = /^[a-z0-9-_.]+$/i;
+
+var match_spaces = / +/g;
+var match_path_slash = /\\+/;
+
 
 // ALIASES
 var get_type = Utils.get_type;
@@ -70,63 +78,92 @@ function update_modules_path() {
 	return modules_path = Path.join( app_settings.path, app_settings.modules_directory );
 }
 
-function load_module( mamespace ) {
-	var subpath = mamespace.replace( match_namespace_joints, '/' ).replace()
-	var filepath = Path.join( app_settings.modules_path, subpath + '.js' );
-	var content = "";
+function detect_modules( path, parent_namespace ) {
+	if( !path ) {
+		return;
+	}
 
-	try {
-		content = FS.readFileSync( filepath, 'utf-8' );
-	} catch( e ) { }
+	parent_namespace = parent_namespace || "";
 
-	return content;
-}
+	var settings = null;
 
-function detect_modules( path ) {
+	var module_json = Path.join( path, "module.json" );
+	var settings_json = IO.get_content( module_json );
+
+	var relative_path = path.replace( modules_path, '' );
+	var relative_parents = relative_path.split( '\\' );
+	var current_directory = relative_parents.splice( -1 )[ 0 ];
+	var provides_namespace = false;
+
+	// FILE EXIST
+	if( settings_json !== null ) {
+		provides_namespace = true;
+
+		try {
+			settings = JSON.parse( settings_json );
+		} catch( e ) {
+			settings = null;
+			console.log( 'Warning: Settings file could not be parsed [' + module_json + ']' );
+			console.log( 'Exception: ' + e );
+		}
+
+		if( settings ) {
+			var id = settings.id = ( settings.id || current_directory );
+			var namespace = settings.namespace;
+
+			if( namespace == undefined ) {
+				namespace = settings.namespace = parent_namespace;
+			}
+
+			var full_identifier = ( namespace ? namespace + '.' : '' ) + id;
+
+			var id_is_valid = match_valid_id.test( id );
+			var namespace_is_valid = namespace ? match_valid_namespace.test( namespace ) : true;
+
+			if( id_is_valid && namespace_is_valid ) {
+				var resource_provider = new ResourceProvider( path );
+				var module = new Module( settings, resource_provider );
+
+				// ADD/UPDATE MODULE
+				module_collection[ full_identifier ] = module;
+			} else {
+				console.log( 'Exception: module id or namespace is invalid' );
+				console.log( 'Module ID: [' + id + ']' );
+				console.log( 'Module namespace: [' + namespace + ']' );
+			}
+		}
+
+		// console.log( 'path', path );
+		// console.log( 'parent_namespace', parent_namespace );
+		// console.log( '' );
+
+		// console.log( 'modules_path', modules_path );
+		// console.log( 'relative_path', relative_path );
+
+		// console.log( 'relative_parents', relative_parents );
+		// console.log( 'current_directory', current_directory );
+		// console.log( '' );
+		// console.log( '' );
+	}
+
 	var directories = IO.get_directories( path );
+	var d_max = directories.length;
 	var directory;
 
-	var filepath;
-	var content;
-	var settings;
+	while( d_max-- ) {
+		directory = directories[ d_max ];
 
-	for( var i = directories.length; i--; ) {
-		directory = directories[ i ];
-		filepath = Path.join( directory, "module.json" );
-		content = IO.get_content( filepath );
-
-		// FILE EXIST
-		if( content !== null ) {
-			try {
-				settings = JSON.parse( content );
-			} catch( e ) {
-				settings = null;
-				console.log( 'Warning: Settings file [' + filepath + '] could not be parsed.' );
-				console.log( 'Exception: ' + e );
-			}
+		if( directory.toLowerCase() === 'resources' ) {
+			continue;
 		}
 
-		if( settings !== null ) {
-			settings.path = directory;
-			settings.modules_path = modules_path;
-
-			var module = new Module( settings );
-
-			var module_id = module.id;
-			var module_namespace = module.namespace;
-
-			if( module_collection[ module_id ] === undefined ) {
-				module_collection[ module_id ] = module;
-
-				console.log( 'Success: loaded module [' + module_id + ']' );
-			} else {
-				console.log( 'Warning: module id [' + module_id + '] is already in use.' );
-			}
-
-			// DETECT FOR CHILD MODULES
-			//detect_modules( directory + '/' + 'modules' );
+		if( provides_namespace ) {
+			parent_namespace = ( parent_namespace ? parent_namespace + '.' : '' ) + current_directory;
 		}
+
+		detect_modules( directory, parent_namespace );
 	}
+
 }
 
 module.exports = mad;
