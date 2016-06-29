@@ -29,7 +29,7 @@ app.listen( port, function () {
     console.log( 'MAD app is running wild on port: ' + port );
 });
 
-dump_json( __dirname + '\\modules.json', mad.modules() );
+dump_json( __dirname + '\\dump.json', mad.modules() );
 
 function dump_json( file, data ) {
 	var cache = [];

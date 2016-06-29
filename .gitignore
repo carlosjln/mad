@@ -14,3 +14,4 @@ node_modules
 
 # Project specific
 !/examples/**/node_modules
+dump.json
