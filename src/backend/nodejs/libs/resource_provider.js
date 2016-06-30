@@ -21,7 +21,7 @@ resource_provider.prototype = {
 	constructor: resource_provider,
 
 	get_source: function () {
-		return IO.get_content( this.module_path + '\\module.js' );
+		return IO.get_content( Path.join( this.module_path, 'module.js' ) );
 	},
 
 	get_templates: function () {
@@ -37,20 +37,19 @@ resource_provider.prototype = {
 	},
 
 	get_resources: function ( resource, file_filter ) {
-		var path = this.resources_path + '\\' + resource;
+		var path = Path.join( this.resources_path, resource );
 		var files = IO.get_files( path, file_filter );
 
 		var collection = {};
 
 		var i = files.length;
 		var key;
-		var file;
+		var filename;
 
 		while( i-- ) {
-			file = files[ i ];
-			key = file.replace( match_file_extension, '' );
-
-			collection[ key ] = IO.get_content( path + '\\' + file ) || "";
+			filename = files[ i ];
+			key = filename.replace( match_file_extension, '' );
+			collection[ key ] = IO.get_content( Path.join( path, filename) ) || "";
 		}
 
 		return collection;

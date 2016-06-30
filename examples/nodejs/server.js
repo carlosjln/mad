@@ -13,8 +13,6 @@ var port = process.env.PORT || 8000;
 app.use( '/', express.static( __dirname + '/public' ) );
 
 mad.start( {
-    app_path: __dirname,
-    //modules_path: path.join( __dirname, "public", "modules" )
     modules_path: path.join( __dirname, "public" )
 });
 
