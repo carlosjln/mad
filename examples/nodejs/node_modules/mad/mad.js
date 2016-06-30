@@ -15,12 +15,10 @@ var Module = require( './libs/module' );
 
 var ResourceProvider = require( './libs/resource_provider' );
 
+// ALIASES
+var get_type = Utils.get_type;
+
 // SHARED VARIABLES
-var app_settings = {
-	path: null,
-	modules_directory: "/modules/"
-};
-var modules_path = '';
 var module_collection = {};
 
 var match_module_url = /^\/mad\/module\//ig;
@@ -28,23 +26,38 @@ var match_module_url = /^\/mad\/module\//ig;
 var match_valid_id = /^[a-z0-9-_]+$/i;
 var match_valid_namespace = /^[a-z0-9-_.]+$/i;
 
-var match_spaces = / +/g;
-var match_path_slash = /\\+/;
+var match_trailing_slashes = /^(\\|\/)+|(\\|\/)+$/g;
+var path_separator = /(?:\\|\/)+/g;
 
+var app_settings = {
+	modules_path: null
+};
 
-// ALIASES
-var get_type = Utils.get_type;
+var base_path = '';
+var modules_path = '';
 
-function mad() {
+function mad() { }
 
-}
-
-mad.setup = function ( settings ) {
+mad.start = function ( settings ) {
 	Utils.copy( settings, app_settings );
 
-	update_modules_path();
+	base_path = Path.normalize( app_settings.modules_path );
+	modules_path = Path.join( base_path, 'modules' ).replace( match_trailing_slashes, '' );
 
-	detect_modules( modules_path );
+	var modules_directory_exist = true;
+
+	try {
+		var stats = FS.lstatSync( modules_path );
+		modules_directory_exist = stats.isDirectory();
+	} catch( e ) {
+		modules_directory_exist = false;
+	}
+
+	if( modules_directory_exist ) {
+		detect_modules( modules_path );
+	} else {
+		console.log( 'Error: modules directory not found [' + modules_path + ']' );
+	}
 };
 
 mad.handle = function ( request, response ) {
@@ -73,15 +86,34 @@ mad.modules = function () {
 	return module_collection;
 };
 
-// HELPERS
-function update_modules_path() {
-	return modules_path = Path.join( app_settings.path, app_settings.modules_directory );
-}
+mad.dump_json = function ( file, data ) {
+	var cache = [];
+	var filter = function ( key, value ) {
+		if( typeof value === 'object' && value !== null ) {
+			if( cache.indexOf( value ) !== -1 ) {
+				// Circular reference found, discard key
+				return;
+			}
+
+			// Store value in our collection
+			cache.push( value );
+		}
+
+		return value;
+	};
+	var data = JSON.stringify( data, filter, 4 );
+
+	cache = null;
+
+	FS.writeFile( file, data, function () { });
+};
 
 function detect_modules( path, parent_namespace ) {
 	if( !path ) {
 		return;
 	}
+
+	//path = path.replace( match_trailing_slashes, '' );
 
 	parent_namespace = parent_namespace || "";
 
@@ -90,13 +122,14 @@ function detect_modules( path, parent_namespace ) {
 	var module_json = Path.join( path, "module.json" );
 	var settings_json = IO.get_content( module_json );
 
-	var relative_path = path.replace( modules_path, '' );
-	var relative_parents = relative_path.split( '\\' );
+	var relative_path = path.replace( modules_path, '' ).replace( match_trailing_slashes, '' );
+	var relative_parents = relative_path.split( path_separator );
+
 	var current_directory = relative_parents.splice( -1 )[ 0 ];
 	var provides_namespace = false;
 
 	// FILE EXIST
-	if( settings_json !== null ) {
+	if( settings_json ) {
 		provides_namespace = true;
 
 		try {
