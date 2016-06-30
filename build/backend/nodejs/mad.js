@@ -42,7 +42,7 @@ mad.start = function ( settings ) {
 	Utils.copy( settings, app_settings );
 
 	base_path = Path.normalize( app_settings.modules_path );
-	modules_path = Path.join( base_path, 'modules' ).replace( match_trailing_slashes, '' );
+	modules_path = Path.join( base_path, 'modules' );
 
 	var modules_directory_exist = true;
 
