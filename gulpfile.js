@@ -23,7 +23,7 @@ gulp.task( 'update-examples', function () {
 
     // FRONTEND FILES
     try {
-        fs.copySync( '.\\src\\javascript', '.\\examples\\nodejs\\public\\resources\\scripts\\libraries\\mad-js', { clobber: true } )
+        fs.copySync( '.\\src\\frontend', '.\\examples\\nodejs\\public\\resources\\scripts\\libraries\\mad-js', { clobber: true } )
     } catch ( err ) {
         console.error( 'Could not copy front-end directory', exception );
     }
