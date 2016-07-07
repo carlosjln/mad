@@ -7,6 +7,15 @@
  * https://github.com/carlosjln
  */
 
+/**
+ * POLYFILS
+ */
+if( !String.prototype.trim ) {
+	String.prototype.trim = function () {
+		return this.replace( /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '' );
+	};
+}
+
 ( function ( win ) {
 	var array_splice = Array.prototype.splice;
 
@@ -14,6 +23,8 @@
 	var cached_modules = {};
 	var cached_views = {};
 	var shared_module;
+
+	var get_type = Object.prototype.toString;
 
 	// CLASSES
 	var ResourceCollection = ( function () {
@@ -32,7 +43,7 @@
 			constructor: resource_collection,
 
 			update: function ( resources ) {
-				if( typeof resources !== 'object' ) {
+				if( get_type.call( resources ) !== '[object Object]' ) {
 					return;
 				};
 
@@ -80,7 +91,11 @@
 			var css;
 
 			for( var item in raw_styles ) {
-				css = raw_styles[ item ];
+				css = ( raw_styles[ item ] || '' ).trim();
+
+				if( !css ) {
+					continue;
+				}
 
 				if( raw_styles.hasOwnProperty( item ) ) {
 					style = document.createElement( 'style' );
@@ -101,12 +116,20 @@
 
 		function update_components( raw_components, collection ) {
 			var source;
+			var item;
 
-			for( var item in raw_components ) {
-				if( raw_components.hasOwnProperty( item ) && typeof ( source = raw_components[ item ] ) === 'string' ) {
+			for( item in raw_components ) {
+				source = raw_components[ item ];
+
+				if( !source ) {
+					continue;
+				}
+
+				if( typeof ( source ) === 'string' && raw_components.hasOwnProperty( item ) ) {
 					try {
 						collection[ item ] = new Function( 'return (' + source + ');' )();
 					} catch( exception ) {
+						console.log( 'Exception: unable to process component [' + item + ']' );
 						throw exception;
 					}
 				}
@@ -230,9 +253,8 @@
 			throw exception;
 		}
 
-		function do_nothing() {
+		function do_nothing() { }
 
-		}
 		return request;
 	})();
 
@@ -247,7 +269,7 @@
 		var callback = arg2;
 		var data = arg3;
 
-		if( mad.tools.get_type( arg2 ) !== 'function' ) {
+		if( get_type.call( arg2 ) !== '[object Function]' ) {
 			callback = null;
 			data = arg2;
 		}
