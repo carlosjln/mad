@@ -13,7 +13,7 @@ function module( shared ) {
 		section.find( 'form' ).submit( authenticate );
 
 		// SAMPLE FOR GLOBAL STUFF
-		// shared.resources.templates["lame-ui"]
+		// shared.resources.templates["dummy-ui"]
     }
 
 	function authenticate( e ) {
@@ -21,8 +21,11 @@ function module( shared ) {
 			e.preventDefault()
 		}
 
-		alert( "Authenticating..." );
-		alert( "Pfsss I lied :P this is just a dummy test" );
-		section.hide();
+		section.find( 'button.submit' ).attr( 'disabled', true ).addClass( 'loading' );
+
+		setTimeout( function () {
+			section.hide();
+			MAD.modules.get( "dashboard" );
+		}, 3000 );
 	}
 }

@@ -70,7 +70,24 @@ mad.handle = function ( request, response ) {
 
     if( module ) {
         reply = module.get_model();
-    }
+
+    } else {
+		reply = {
+			module: {
+				id: null,
+				namespace: null,
+				source: null
+			},
+
+			resources: {
+				templates: {},
+				styles: {},
+				components: {}
+			},
+
+			exception: "Module not found"
+		};
+	}
 
     /*
     var method = request.method.toLowerCase();

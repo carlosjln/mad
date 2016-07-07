@@ -13,7 +13,7 @@
 	// COLLECTIONS
 	var cached_modules = {};
 	var cached_views = {};
-	var global_context = {};
+	var shared_module;
 
 	// CLASSES
 	var ResourceCollection = ( function () {
@@ -32,6 +32,10 @@
 			constructor: resource_collection,
 
 			update: function ( resources ) {
+				if( typeof resources !== 'object' ) {
+					return;
+				};
+
 				var self = this;
 				var copy = mad.tools.copy;
 
@@ -44,7 +48,7 @@
 
 			get: function ( resources, callback ) {
 				var self = this;
-				var query = "";
+				var query = '';
 
 				for( var resource in resources ) {
 					if( resources.hasOwnProperty( resource ) ) {
@@ -53,13 +57,13 @@
 				}
 
 				mad.request( {
-					url: "mad/module/" + self.module_id + "/resources",
+					url: 'mad/module/' + self.module_id + '/resources',
 					data: query,
 
 					on_success: function ( reply ) {
 						self.update( reply.resources );
 
-						if( typeof callback === "function" ) {
+						if( typeof callback === 'function' ) {
 							try {
 								callback.call( resources );
 							} catch( exception ) {
@@ -79,8 +83,8 @@
 				css = raw_styles[ item ];
 
 				if( raw_styles.hasOwnProperty( item ) ) {
-					style = document.createElement( "style" );
-					style.setAttribute( "type", "text/css" );
+					style = document.createElement( 'style' );
+					style.setAttribute( 'type', 'text/css' );
 
 					if( style.styleSheet ) { // IE
 						style.styleSheet.cssText = css;
@@ -99,9 +103,9 @@
 			var source;
 
 			for( var item in raw_components ) {
-				if( raw_components.hasOwnProperty( item ) && typeof ( source = raw_components[ item ] ) === "string" ) {
+				if( raw_components.hasOwnProperty( item ) && typeof ( source = raw_components[ item ] ) === 'string' ) {
 					try {
-						collection[ item ] = new Function( "return (" + source + ");" )();
+						collection[ item ] = new Function( 'return (' + source + ');' )();
 					} catch( exception ) {
 						throw exception;
 					}
@@ -114,8 +118,8 @@
 
 	var Module = ( function () {
 		function module( id ) {
-			if( typeof id !== "string" ) {
-				throw "The module [id] must be a string.";
+			if( typeof id !== 'string' ) {
+				throw 'The module [id] must be a string.';
 			}
 
 			var self = this;
@@ -128,24 +132,49 @@
 			constructor: module,
 
 			initialize: function () {
-				// DEFAULT INITIALIZATION METHOD, OVERRIDE WITH YOUR OWN CODE.
+				// OVERRIDE WITH YOUR OWN CODE IN Module.js
 			},
+		};
+
+		module.new = function ( id, data, resources ) {
+			var source = ( data.source || '' ).trim();
+
+			if( !id || source === '' ) {
+				///#DEBUG
+				console.log( 'Exception: module not found [' + id + ']' );
+				///#ENDDEBUG
+				return;
+			}
+
+			// INITIALIZE AND CACHE THE NEW INSTANCE
+			var instance = new Module( id );
+
+			// -MINE FIELD-
+			// ANYTHING CAN GO WRONG FROM THIS POINT ON 
+			try {
+				// EVALUATE THE SOURCE CODE AND MERGE IT WITH THE NEW MODULE INSTANCE 
+				( new Function( 'return (' + source + ');' )() ).call( instance, shared_module );
+
+				// REGISTER REQUIRED RESOURCES
+				instance.resources.update( resources );
+
+				///#DEBUG
+				console.log( 'Initializing module: ', instance );
+				///#ENDDEBUG
+
+				instance.initialize();
+			} catch( exception ) {
+				console.log( 'Exception: ', exception );
+			}
+
+			return instance;
 		};
 
 		return module;
 	})();
 
-	function mad() { }
-
-	function modules() {
-		return cached_modules;
-	}
-
-	// SOME HELPERS
 	var load_module = ( function () {
 		function request( module_id, callback, data ) {
-			//requested_handlers[ module_id ] = true;
-
 			var context = {
 				module_id: module_id,
 				callback: callback,
@@ -153,7 +182,7 @@
 			};
 
 			mad.request( {
-				url: "mad/module/" + module_id,
+				url: 'mad/module/' + module_id,
 
 				context: context,
 
@@ -165,47 +194,35 @@
 
 		function before_request() {
 			///#DEBUG
-			console.log( "Requesting module: ", this.module_id );
+			console.log( 'Requesting module: ', this.module_id );
 			///#ENDDEBUG
 		}
 
 		function on_success( reply ) {
 			if( !reply ) {
-				return;
+				return console.log( "Exception: Module could not be loaded." );
+			}
+
+			if( reply.exception ) {
+				return console.log( "Exception: " + ( reply.exception || "Module could not be loaded." ) );
 			}
 
 			var self = this;
-			var module_id = self.module_id;
 
-			var module_data = reply.module;
-			var source = ( module_data.source || "" ).trim();
+			var id = self.module_id;
+			var module = Module.new( id, reply.module, reply.resources );
 
-			if( source === "" ) {
-				///#DEBUG
-				console.log( "Error: module [" + module_id + "] not found." );
-				///#ENDDEBUG
-				return;
-			}
+			if( module ) {
+				cached_modules[ id ] = module;
 
-			// INITIALIZE AND CACHE THE NEW INSTANCE
-			var module = cached_modules[ module_id ] = new Module( module_id );
+				var data = self.data;
+				var params = ( data instanceof Array ? data : [ data ] );
 
-			// -MINE FIELD-
-			// ANYTHING CAN GO WRONG FROM THIS POINT ON 
-			try {
-				// EVALUATE THE SOURCE CODE AND MERGE IT WITH THE NEW MODULE INSTANCE 
-				( new Function( "return (" + source + ");" )() ).call( module, { shared: true });
+				if( data == undefined ) {
+					params = undefined;
+				}
 
-				// REGISTER REQUIRED RESOURCES
-				module.resources.update( reply.resources );
-
-				///#DEBUG
-				console.log( "Initializing module: ", module );
-				///#ENDDEBUG
-
-				module.initialize();
-			} catch( exception ) {
-				throw exception;
+				( this.callback || do_nothing ).apply( module, params );
 			}
 		}
 
@@ -213,15 +230,24 @@
 			throw exception;
 		}
 
+		function do_nothing() {
+
+		}
 		return request;
 	})();
+
+	function mad() { }
+
+	function modules() {
+		return cached_modules;
+	}
 
 	modules.get = function ( module_id, arg2, arg3 ) {
 		var module = cached_modules[ module_id ];
 		var callback = arg2;
 		var data = arg3;
 
-		if( mad.tools.get_type( arg2 ) !== "function" ) {
+		if( mad.tools.get_type( arg2 ) !== 'function' ) {
 			callback = null;
 			data = arg2;
 		}
@@ -233,8 +259,10 @@
 		load_module( module_id, callback, data );
 	};
 
+	shared_module = Module.new( 'shared', { id: 'shared', source: 'function shared() {return false;}' });
+
 	mad.modules = modules;
-	mad.version = "0.0.1";
+	mad.version = '0.0.1';
 
 	win.MAD = mad;
 })( window );
