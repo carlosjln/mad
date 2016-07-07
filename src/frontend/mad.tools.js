@@ -43,7 +43,7 @@
 		undefined_only = undefined_only === true;
 
 		// HANDLE DATE
-		if( source_type === "date" ) {
+		if( source_type === 'date' ) {
 			target = new Date();
 			target.setTime( source.getTime() );
 
@@ -51,7 +51,7 @@
 		}
 
 		// HANDLE ARRAY
-		if( source_type === "array" && undefined_only === false ) {
+		if( source_type === 'array' && undefined_only === false ) {
 			var index = source.length;
 
 			target = target === undefined ? [] : target;
@@ -64,7 +64,7 @@
 		}
 
 		// HANDLE OBJECTS
-		if( source_type === "object" ) {
+		if( source_type === 'object' ) {
 			target = target === undefined ? {} : target;
 
 			for( var attribute in source ) {
@@ -116,7 +116,7 @@
 
 	// ENCODE/DECODE BASE64
 	// TAKEN FROM https://github.com/carlosjln/epic
-	var B64KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	var B64KEY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 	function encode_base64( input ) {
 		var key = B64KEY;
 
@@ -124,7 +124,7 @@
 		var length = str.length;
 		var index = 0;
 
-		var output = "";
+		var output = '';
 		var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
 
 		while( index < length ) {
@@ -150,11 +150,11 @@
 	}
 
 	function encode_utf8( input ) {
-		var str = input.replace( /\r\n/g, "\n" );
+		var str = input.replace( /\r\n/g, '\n' );
 		var length = str.length;
 		var index = 0;
 
-		var output = "";
+		var output = '';
 		var charcode;
 
 		while( length-- ) {
@@ -176,8 +176,8 @@
 	}
 
 	function create_style( css ) {
-		var style = document.createElement( "style" );
-		style.setAttribute( "type", "text/css" );
+		var style = document.createElement( 'style' );
+		style.setAttribute( 'type', 'text/css' );
 
 		if( style.styleSheet ) { // IE
 			style.styleSheet.cssText = css;

@@ -4,7 +4,7 @@
 
 	var get_transport = window.XMLHttpRequest ?
 		function () { return new XMLHttpRequest(); } :
-		function () { return new ActiveXObject( "Microsoft.XMLHTTP" ); };
+		function () { return new ActiveXObject( 'Microsoft.XMLHTTP' ); };
 
 	function ajax( settings ) {
 		if( ( this instanceof ajax ) === false ) {
@@ -22,13 +22,13 @@
 			typeof_default_property = get_type( self[ property ] );
 			value = settings[ property ];
 
-			if( settings.hasOwnProperty( property ) && ( typeof_default_property === "undefined" || typeof_default_property === get_type( value ) ) ) {
+			if( settings.hasOwnProperty( property ) && ( typeof_default_property === 'undefined' || typeof_default_property === get_type( value ) ) ) {
 				self[ property ] = value;
 			}
 		}
 
 		var context = self.context || self;
-		var method = ( self.method || "get" ).toUpperCase();
+		var method = ( self.method || 'get' ).toUpperCase();
 		var url = self.url;
 		var data = self.data;
 
@@ -38,7 +38,7 @@
 
 		transport.open( method, url, true );
 
-		if( method === "POST" ) {
+		if( method === 'POST' ) {
 			transport.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 
 		} else if( data ) {
@@ -56,8 +56,8 @@
 	ajax.prototype = {
 		constructor: ajax,
 
-		url: "",
-		method: "GET",
+		url: '',
+		method: 'GET',
 
 		before_request: function ( xhr, settings ) {
 

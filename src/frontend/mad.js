@@ -223,11 +223,11 @@ if( !String.prototype.trim ) {
 
 		function on_success( reply ) {
 			if( !reply ) {
-				return console.log( "Exception: Module could not be loaded." );
+				return console.log( 'Exception: Module could not be loaded.' );
 			}
 
 			if( reply.exception ) {
-				return console.log( "Exception: " + ( reply.exception || "Module could not be loaded." ) );
+				return console.log( 'Exception: ' + ( reply.exception || 'Module could not be loaded.' ) );
 			}
 
 			var self = this;
