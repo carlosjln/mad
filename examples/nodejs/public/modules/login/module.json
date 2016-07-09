@@ -1,5 +1,6 @@
 {
 	"required": {
-		"templates": ["demo-template"]
+		"templates": ["login"],
+		"styles": ["login"]
 	}
 }

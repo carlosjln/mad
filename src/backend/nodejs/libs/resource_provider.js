@@ -24,16 +24,37 @@ resource_provider.prototype = {
 		return IO.get_content( Path.join( this.module_path, 'module.js' ) );
 	},
 
-	get_templates: function () {
-		return this.get_resources( "templates", match_html_file );
+	get_templates: function ( names ) {
+		var filter = match_html_file;
+
+		if( names ) {
+			names = names.join( '|' );
+			filter = RegExp( '^(' + names + ')\.html$', 'i' );
+		}
+
+		return this.get_resources( "templates", filter );
 	},
 
-	get_styles: function () {
-		return this.get_resources( "styles", match_css_file );
+	get_styles: function ( names ) {
+		var filter = match_css_file;
+
+		if( names ) {
+			names = names.join( '|' );
+			filter = RegExp( '^(' + names + ')\.css$', 'i' );
+		}
+
+		return this.get_resources( "styles", filter );
 	},
 
-	get_components: function () {
-		return this.get_resources( "components", match_js_file );
+	get_components: function ( names ) {
+		var filter = match_js_file;
+
+		if( names ) {
+			names = names.join( '|' );
+			filter = RegExp( '^(' + names + ')\.js$', 'i' );
+		}
+
+		return this.get_resources( "components", filter );
 	},
 
 	get_resources: function ( resource, file_filter ) {
@@ -49,7 +70,7 @@ resource_provider.prototype = {
 		while( i-- ) {
 			filename = files[ i ];
 			key = filename.replace( match_file_extension, '' );
-			collection[ key ] = IO.get_content( Path.join( path, filename) ) || "";
+			collection[ key ] = IO.get_content( Path.join( path, filename ) ) || "";
 		}
 
 		return collection;

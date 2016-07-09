@@ -118,6 +118,7 @@ mad.dump_json = function ( file, data ) {
 
 		return value;
 	};
+
 	var data = JSON.stringify( data, filter, 4 );
 
 	cache = null;
@@ -129,8 +130,6 @@ function detect_modules( path, parent_namespace ) {
 	if( !path ) {
 		return;
 	}
-
-	//path = path.replace( match_trailing_slashes, '' );
 
 	parent_namespace = parent_namespace || "";
 

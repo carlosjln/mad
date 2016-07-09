@@ -9,7 +9,7 @@ module.exports = ( function () {
 
 		self.settings = settings;
 		self.resource_provider = resource_provider;
-		
+
 		// SET MODULE PROPERTIES
 		module.id = settings.id;
 		module.namespace = settings.namespace;
@@ -18,25 +18,15 @@ module.exports = ( function () {
     constructor.prototype = {
         constructor: constructor,
 
-        // get_source: function () {
-        //     return IO.get_content( this.path + '/module.js' ) || "";
-        // },
-
-        // get_templates: function () {
-        //     return get_content( this.path, 'resources/templates', match_html_file );
-        // },
-
-        // get_styles: function () {
-        //     return get_content( this.path, 'resources/styles', match_css_file );
-        // },
-
-        // get_components: function () {
-        //     return get_content( this.path, 'resources/components', match_js_file );
-        // },
-
         get_model: function function_name( argument ) {
             var self = this;
 			var resource_provider = self.resource_provider;
+
+			var required = self.settings.required || {};
+
+			var templates = resource_provider.get_templates( required.templates || [] );
+			var styles = resource_provider.get_styles( required.styles || [] );
+			var components = resource_provider.get_components( required.components || [] );
 
             var data = {
                 module: {
@@ -46,9 +36,9 @@ module.exports = ( function () {
                 },
 
                 resources: {
-                    templates: resource_provider.get_templates() || {},
-                    styles: resource_provider.get_styles() || {},
-                    components: resource_provider.get_components() || {}
+                    templates: templates,
+                    styles: styles,
+                    components: components
                 }
             };
 
