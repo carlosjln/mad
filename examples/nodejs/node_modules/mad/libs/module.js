@@ -24,9 +24,9 @@ module.exports = ( function () {
 
 			var required = self.settings.required || {};
 
-			var templates = resource_provider.get_templates( required.templates || [] );
-			var styles = resource_provider.get_styles( required.styles || [] );
-			var components = resource_provider.get_components( required.components || [] );
+			var templates = resource_provider.get_templates( required.templates );
+			var styles = resource_provider.get_styles( required.styles );
+			var components = resource_provider.get_components( required.components );
 
             var data = {
                 module: {
