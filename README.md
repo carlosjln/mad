@@ -11,9 +11,6 @@ Here are some of the settings you can use to define the behavior of your modules
     // Is the unique (or global) identifier of the module.
     "id": "module_name"
     
-    // NOTE: the name of module directories should be alphanumeric and use underscore instead of spaces.
-    // e.g. "module_name", "mod123"
-    
     // Contains the specifications about how the resources of this module should be handled.
     "resources": {
         // Enables cache on all the resources.
