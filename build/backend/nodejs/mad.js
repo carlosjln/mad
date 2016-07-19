@@ -13,7 +13,7 @@ var IO = require( './libs/io' );
 var Utils = require( './libs/utilities' );
 var Module = require( './libs/module' );
 
-var ResourceProvider = require( './libs/resource_provider' );
+var app_settings = require( './libs/app_settings' );
 
 // ALIASES
 var get_type = Utils.get_type;
@@ -22,16 +22,6 @@ var get_type = Utils.get_type;
 var module_collection = {};
 
 var match_module_url = /^\/mad\/module\//ig;
-
-var match_valid_id = /^[a-z0-9-_]+$/i;
-var match_valid_namespace = /^[a-z0-9-_.]+$/i;
-
-var match_trailing_slashes = /^(\\|\/)+|(\\|\/)+$/g;
-var path_separator = /(?:\\|\/)+/g;
-
-var app_settings = {
-	modules_path: null
-};
 
 var base_path = '';
 var modules_path = '';
@@ -54,6 +44,11 @@ mad.start = function ( settings ) {
 	}
 
 	if( modules_directory_exist ) {
+		console.log( '\n' );
+		console.log( 'MAD' );
+		console.log( 'Scanning [' + modules_path + ']' );
+		console.log( '\n' );
+
 		detect_modules( modules_path );
 	} else {
 		console.log( 'Error: modules directory not found [' + modules_path + ']' );
@@ -126,73 +121,22 @@ mad.dump_json = function ( file, data ) {
 	FS.writeFile( file, data, function () { });
 };
 
-function detect_modules( path, parent_namespace ) {
+function detect_modules( path ) {
 	if( !path ) {
 		return;
 	}
 
-	parent_namespace = parent_namespace || "";
+	var module = null;
 
-	var settings = null;
+	try {
+		module = Module.load( path );
 
-	var module_json = Path.join( path, "module.json" );
-	var settings_json = IO.get_content( module_json );
-
-	var relative_path = path.replace( modules_path, '' ).replace( match_trailing_slashes, '' );
-	var relative_parents = relative_path.split( path_separator );
-
-	var current_directory = relative_parents.splice( -1 )[ 0 ];
-	var provides_namespace = false;
-
-	// FILE EXIST
-	if( settings_json ) {
-		provides_namespace = true;
-
-		try {
-			settings = JSON.parse( settings_json );
-		} catch( e ) {
-			settings = null;
-			console.log( 'Warning: Settings file could not be parsed [' + module_json + ']' );
-			console.log( 'Exception: ' + e );
+		if( module ) {
+			module_collection[ module.id ] = module;
 		}
-
-		if( settings ) {
-			var id = settings.id = ( settings.id || current_directory );
-			var namespace = settings.namespace;
-
-			if( namespace == undefined ) {
-				namespace = settings.namespace = parent_namespace;
-			}
-
-			var full_identifier = ( namespace ? namespace + '.' : '' ) + id;
-
-			var id_is_valid = match_valid_id.test( id );
-			var namespace_is_valid = namespace ? match_valid_namespace.test( namespace ) : true;
-
-			if( id_is_valid && namespace_is_valid ) {
-				var resource_provider = new ResourceProvider( path );
-				var module = new Module( settings, resource_provider );
-
-				// ADD/UPDATE MODULE
-				module_collection[ full_identifier ] = module;
-			} else {
-				console.log( 'Exception: module id or namespace is invalid' );
-				console.log( 'Module ID: [' + id + ']' );
-				console.log( 'Module namespace: [' + namespace + ']' );
-			}
-		}
-
-		// console.log( 'path', path );
-		// console.log( 'parent_namespace', parent_namespace );
-		// console.log( '' );
-
-		// console.log( 'modules_path', modules_path );
-		// console.log( 'relative_path', relative_path );
-
-		// console.log( 'relative_parents', relative_parents );
-		// console.log( 'current_directory', current_directory );
-		// console.log( '' );
-		// console.log( '' );
+	} catch( e ) {
+		console.log( e );
+		console.log( '\n' );
 	}
 
 	var directories = IO.get_directories( path );
@@ -206,11 +150,7 @@ function detect_modules( path, parent_namespace ) {
 			continue;
 		}
 
-		if( provides_namespace ) {
-			parent_namespace = ( parent_namespace ? parent_namespace + '.' : '' ) + current_directory;
-		}
-
-		detect_modules( directory, parent_namespace );
+		detect_modules( directory );
 	}
 
 }

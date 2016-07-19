@@ -1,4 +1,6 @@
 {
+	"id": "login",
+	
 	"required": {
 		"templates": ["login"],
 		"styles": ["login"]

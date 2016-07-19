@@ -9,18 +9,7 @@ Here are some of the settings you can use to define the behavior of your modules
 ```javascript
 {
     // Is the unique (or global) identifier of the module.
-    // If undefined, the id will be formed by the properties [namespace] + [name].
-    "id": undefined
-    
-    // Is the localized name of the module.
-    // If undefined, the name will be taken from the current directory.
-    // e.g. if the directory containing the module is named "demo-ui" that will become the value of this property.
-    "name": undefined
-    
-    // Represents the path or hierarchy where this module is located
-    // If undefined, it's value will be the concatenation of all the parents directories or defined namespaces.
-    // e.g. "modules/new-demo/dashboard" will be turned into "new_demo.dashboard"
-    "namespace": undefined
+    "id": "module_name"
     
     // NOTE: the name of module directories should be alphanumeric and use underscore instead of spaces.
     // e.g. "module_name", "mod123"
