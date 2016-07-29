@@ -28,19 +28,18 @@ if( !String.prototype.trim ) {
 
 	// CLASSES
 	var ResourceCollection = ( function () {
-		function resource_collection( module ) {
+		function main( module ) {
 			var self = this;
 
 			self.module_id = module.id;
 
 			self.templates = {};
 			self.styles = {};
-			self.datasets = {};
 			self.components = {};
 		}
 
-		resource_collection.prototype = {
-			constructor: resource_collection,
+		main.prototype = {
+			constructor: main,
 
 			update: function ( resources ) {
 				if( get_type.call( resources ) !== '[object Object]' ) {
@@ -51,10 +50,8 @@ if( !String.prototype.trim ) {
 				var copy = mad.tools.copy;
 
 				copy( resources.templates, self.templates, true );
-				copy( resources.datasets, self.datasets, true );
-
-				update_styles( resources.styles, self.styles );
-				update_components( resources.components, self.components );
+				initialize_styles( self.styles, resources.styles );
+				initialize_components( self.components, resources.components );
 			},
 
 			get: function ( resources, callback ) {
@@ -86,18 +83,18 @@ if( !String.prototype.trim ) {
 			}
 		};
 
-		function update_styles( raw_styles, collection ) {
+		function initialize_styles( collection, new_styles ) {
 			var head = document.head || document.getElementsByTagName( 'head' )[ 0 ];
 			var css;
 
-			for( var item in raw_styles ) {
-				css = ( raw_styles[ item ] || '' ).trim();
+			for( var item in new_styles ) {
+				css = ( new_styles[ item ] || '' ).trim();
 
 				if( !css ) {
 					continue;
 				}
 
-				if( raw_styles.hasOwnProperty( item ) ) {
+				if( new_styles.hasOwnProperty( item ) ) {
 					style = document.createElement( 'style' );
 					style.setAttribute( 'type', 'text/css' );
 
@@ -114,18 +111,18 @@ if( !String.prototype.trim ) {
 			}
 		}
 
-		function update_components( raw_components, collection ) {
+		function initialize_components( collection, new_components ) {
 			var source;
 			var item;
 
-			for( item in raw_components ) {
-				source = raw_components[ item ];
+			for( item in new_components ) {
+				source = new_components[ item ];
 
 				if( !source ) {
 					continue;
 				}
 
-				if( typeof ( source ) === 'string' && raw_components.hasOwnProperty( item ) ) {
+				if( typeof ( source ) === 'string' && new_components.hasOwnProperty( item ) ) {
 					try {
 						collection[ item ] = new Function( 'return (' + source + ');' )();
 					} catch( exception ) {
@@ -136,11 +133,11 @@ if( !String.prototype.trim ) {
 			}
 		}
 
-		return resource_collection;
+		return main;
 	})();
 
 	var Module = ( function () {
-		function module( id ) {
+		function main( id ) {
 			if( typeof id !== 'string' ) {
 				throw 'The module [id] must be a string.';
 			}
@@ -151,18 +148,20 @@ if( !String.prototype.trim ) {
 			self.resources = new ResourceCollection( self );
 		}
 
-		module.prototype = {
-			constructor: module,
+		main.prototype = {
+			constructor: main,
 
 			initialize: function () {
 				// OVERRIDE WITH YOUR OWN CODE IN Module.js
 			},
 		};
 
-		module.new = function ( id, data, resources ) {
-			var source = ( data.source || '' ).trim();
+		main.initialize = function ( settings ) {
+			var id = settings.id;
+			var source = settings.source;
+			var resources = settings.resources;
 
-			if( !id || source === '' ) {
+			if( !id || !source ) {
 				///#DEBUG
 				console.log( 'Exception: module not found [' + id + ']' );
 				///#ENDDEBUG
@@ -193,7 +192,7 @@ if( !String.prototype.trim ) {
 			return instance;
 		};
 
-		return module;
+		return main;
 	})();
 
 	var load_module = ( function () {
@@ -233,7 +232,7 @@ if( !String.prototype.trim ) {
 			var self = this;
 
 			var id = self.module_id;
-			var module = Module.new( id, reply.module, reply.resources );
+			var module = Module.initialize( reply );
 
 			if( module ) {
 				cached_modules[ id ] = module;
@@ -281,7 +280,7 @@ if( !String.prototype.trim ) {
 		load_module( module_id, callback, data );
 	};
 
-	shared_module = Module.new( 'shared', { id: 'shared', source: 'function shared() {return false;}' });
+	shared_module = Module.initialize( { id: 'shared', source: 'function shared() {return false;}' });
 
 	mad.modules = modules;
 	mad.version = '0.0.1';

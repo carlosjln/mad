@@ -3,7 +3,6 @@
  * Copyright(c) 2016 Carlos J. Lopez
  * MIT Licensed
  */
-
 'use strict';
 
 var FS = require( 'fs' );
@@ -19,8 +18,6 @@ var app_settings = require( './libs/app_settings' );
 var get_type = Utils.get_type;
 
 // SHARED VARIABLES
-var module_collection = {};
-
 var match_module_url = /^\/mad\/module\//ig;
 
 var base_path = '';
@@ -58,45 +55,33 @@ mad.start = function ( settings ) {
 mad.handle = function ( request, response ) {
 	var url = request.url;
 	var url_parts = url.replace( match_module_url, "" ).split( "/" );
-	var module_name = url_parts[ 0 ];
 
-    var module = module_collection[ module_name ];
+	var module_id = url_parts[ 0 ];
+	var content = ( url_parts[ 1 ] || '' ).toLowerCase();
+
+    var module = Module.get( module_id );
     var reply = null;
 
-    if( module ) {
-        reply = module.get_model();
+	if( content === 'resources' ) {
 
-    } else {
-		reply = {
-			module: {
-				id: null,
-				namespace: null,
-				source: null
-			},
+	} else {
 
-			resources: {
-				templates: {},
-				styles: {},
-				components: {}
-			},
-
-			exception: "Module not found"
-		};
 	}
 
-    /*
-    var method = request.method.toLowerCase();
-	if ( method === "get" ) {
-	} else if( method === "post" ) {
-    }
-	*/
+    if( module ) {
+        reply = module;
+    } else {
+		reply = {
+			exception: "Module not found"
+		};
+
+		console.log( 'Error: Module not found [' + module_id + ']' );
+	}
 
 	response.end( JSON.stringify( reply ) );
 };
 
-mad.modules = function () {
-	return module_collection;
-};
+mad.modules = Module.collection;
 
 mad.dump_json = function ( file, data ) {
 	var cache = [];
@@ -129,11 +114,7 @@ function detect_modules( path ) {
 	var module = null;
 
 	try {
-		module = Module.load( path );
-
-		if( module ) {
-			module_collection[ module.id ] = module;
-		}
+		Module.initialize( path );
 	} catch( e ) {
 		console.log( e );
 		console.log( '\n' );

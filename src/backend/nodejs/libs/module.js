@@ -1,3 +1,5 @@
+'use strict';
+
 require( './prototypes' );
 
 var FS = require( 'fs' );
@@ -7,30 +9,62 @@ var IO = require( './io' );
 var Utils = require( './utilities' );
 var app_settings = require( './app_settings' );
 
-var ResourceProvider = require( './resource_provider' );
+let ResourceProvider = require( './resource_provider' );
 
-var module_collection = {};
+let copy = Utils.copy;
+let get_type = Utils.get_type;
 
-var match_namespace_joints = /(\.)+/g;
-var match_dot = /\./g;
-var match_path_separator = /(?:\\|\/)+/g;
+let match_valid_id = /^[a-z0-9-_]+$/i;
 
-var match_valid_id = /^[a-z0-9-_]+$/i;
+let module_settings_collection = {};
+var modules_collection = {};
+let resource_providers_collection = {};
 
-var match_trailing_slashes = /^(\\|\/)+|(\\|\/)+$/g;
-var match_path_separator = /(?:\\|\/)+/g;
+var default_settings = {
+	resources: {
+		cache: false,
+		required: {}
+	}
+}
 
-function Module( settings ) {
-	var self = this;
-	var path = settings.path;
-	var resource_settings = settings.resources;
+let source_getter = {
+	enumerable: true,
 
-	self.settings = settings;
+	get: function () {
+		var self = this;
+		var id = self.id;
+		var resource_provider = resource_providers_collection[ id ];
 
-	self.id = settings.id;
-	self.path = path;
+		return resource_provider.get_source();
+	}
+};
 
-	self.resource_provider = new ResourceProvider( path );
+let resources_getter = {
+	enumerable: true,
+
+	get: function () {
+		var self = this;
+		var id = self.id;
+
+		var resource_provider = resource_providers_collection[ id ];
+		var required = module_settings_collection[ id ].resources.required || {};
+
+		var templates = resource_provider.get_templates( required.templates );
+		var styles = resource_provider.get_styles( required.styles );
+		var components = resource_provider.get_components( required.components );
+
+		return {
+			templates: templates,
+			styles: styles,
+			components: components
+		};
+	}
+};
+
+function Module( id ) {
+	this.id = id;
+    Object.defineProperty( this, "source", source_getter );
+    Object.defineProperty( this, "resources", resources_getter );
 }
 
 Module.prototype = {
@@ -64,22 +98,31 @@ Module.prototype = {
 	}
 };
 
-// module.create = function ( settings ) {
-// 	var resources = settings.resources || {};
-
-// 	var resource_provider = new ResourceProvider( settings.path );
-// 	var module = new Module( settings );
-// };
-
-Module.load = function ( path ) {
-	var settings = load_settings( path );
+Module.initialize = function ( module_path ) {
+	var settings = load_settings( module_path );
 
 	if( !settings ) {
 		return;
 	}
 
-	return new Module( settings );
+	var id = settings.id;
+	var resources_settings = settings.resources;
+	var module = modules_collection[ id ];
+
+	if( module === undefined ) {
+		module_settings_collection[ id ] = settings;
+		resource_providers_collection[ id ] = new ResourceProvider( module_path, settings.resources );
+		modules_collection[ id ] = new Module( id );
+	}
+
+	return module;
 };
+
+Module.get = function ( module_id ) {
+	return modules_collection[ module_id ];
+}
+
+Module.collection = modules_collection;
 
 function load_settings( path ) {
 	var file = Path.join( path, "module.json" );
@@ -94,6 +137,7 @@ function load_settings( path ) {
 
 	try {
 		settings = JSON.parse( content );
+		copy( default_settings, settings );
 	} catch( e ) {
 		exceptions.add( 'Warning: unable to parse settings file.' );
 		exceptions.add( e );
@@ -110,8 +154,6 @@ function load_settings( path ) {
 
 		throw exceptions.join( '\n' );
 	}
-
-	settings.path = path;
 
 	return settings;
 }

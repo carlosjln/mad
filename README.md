@@ -13,15 +13,17 @@ Here are some of the settings you can use to define the behavior of your modules
     
     // Contains the specifications about how the resources of this module should be handled.
     "resources": {
-        // Enables cache on all the resources.
-        "cache": true,
-        
-        // Enables cache ONLY for the specified resources.
+
+        // Enables cache only for the specified resources.
+        // By default nothing is cached.
         "cache": {
-            // enable cache for all templates
+            // cache the content of module.js file
+            "module": true,
+            
+            // cache all templates
             "templates": true
             
-            // enable cache for specific files
+            // cache specific files
             "templates": ["dashboard"]
             
             // the same applies for [styles] and [components]
@@ -49,7 +51,7 @@ This is where you define the behavior of your module, set event handlers, etc.
         var resources = module.resources;
         
         module.initialize = function () {
-			// accessing resources
+            // accessing resources
             var html = resources.templates[ "login" ];
             
             // the style section contain references to the <style> tags instead of the actual css code

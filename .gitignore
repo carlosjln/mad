@@ -13,5 +13,6 @@ node_modules
 .npm
 
 # Project specific
+.vscode
 !/examples/**/node_modules
 dump.json

@@ -1,3 +1,5 @@
+'use strict';
+
 // OBJECT TYPE DETECTION
 // TAKEN FROM https://github.com/carlosjln/epic
 var get_type = ( function () {
