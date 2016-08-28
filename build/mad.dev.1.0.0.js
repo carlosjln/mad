@@ -11,202 +11,202 @@
  */
 String.prototype.trim || (String.prototype.trim = function() {
     return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
-}), function(t) {
-    function e() {}
-    function n() {
-        return r;
+}), function(e, t) {
+    function n() {}
+    function o(e, t, n) {
+        var o = c[e], r = t, u = n;
+        return "function" !== i(t) && (r = null, u = t), o && r ? r.call(o, u) : void s(e, r, u);
     }
-    var o, r = (Array.prototype.splice, {}), c = Object.prototype.toString, i = function() {
-        function t(t) {
-            var e = this;
-            e.module_id = t.id, e.templates = {}, e.styles = {}, e.components = {};
+    var r, i = (Array.prototype.splice, t.get_type), c = {}, u = function() {
+        function t(e) {
+            var o = this;
+            if (o instanceof t == !1) return new t(e);
+            var c, u, a = o.transport = r();
+            for (var l in e) c = i(o[l]), u = e[l], !e.hasOwnProperty(l) || "undefined" !== c && c !== i(u) || (o[l] = u);
+            var s = o.context || o, d = (o.method || "get").toUpperCase(), f = o.url, p = o.data;
+            a.onreadystatechange = function() {
+                n.call(o);
+            }, a.open(d, f, !0), "POST" === d ? a.setRequestHeader("Content-type", "application/x-www-form-urlencoded") : p && (f = f + (f.indexOf("?") > -1 ? "&" : "?") + p, 
+            p = null), o.before.call(s, o, e), a.send(p);
         }
-        function n(t, e) {
-            var n, o = document.head || document.getElementsByTagName("head")[0];
-            for (var r in e) n = (e[r] || "").trim(), n && e.hasOwnProperty(r) && (style = document.createElement("style"), 
-            style.setAttribute("type", "text/css"), style.styleSheet ? style.styleSheet.cssText = n : style.insertBefore(document.createTextNode(n), null), 
-            o.insertBefore(style, null), t[r] = style);
-        }
-        function o(t, e) {
-            var n, o;
-            for (o in e) if (n = e[o], n && "string" == typeof n && e.hasOwnProperty(o)) try {
-                t[o] = new Function("return (" + n + ");")();
-            } catch (t) {
-                throw console.log("Exception: unable to process component [" + o + "]"), t;
+        function n(e) {
+            var t, n, o = this.transport, r = o.readyState, i = this.context || this;
+            if (4 !== r) return null;
+            try {
+                t = o.status;
+            } catch (e) {
+                return null;
             }
+            if (200 !== t) return null;
+            var c, u = o.responseText;
+            try {
+                n = new Function("return (" + u + ")")(), this.succeeded.call(i, n);
+            } catch (e) {
+                c = e, this.failed.call(i, e);
+            }
+            this.completed.call(i, c, n);
         }
+        function o() {}
+        var r = e.XMLHttpRequest ? function() {
+            return new XMLHttpRequest();
+        } : function() {
+            return new ActiveXObject("Microsoft.XMLHTTP");
+        };
         return t.prototype = {
             constructor: t,
-            update: function(t) {
-                if ("[object Object]" === c.call(t)) {
-                    var r = this, i = e.tools.copy;
-                    i(t.templates, r.templates, !0), n(r.styles, t.styles), o(r.components, t.components);
+            url: "",
+            method: "GET",
+            before: o,
+            completed: o,
+            succeeded: o,
+            failed: o
+        }, t;
+    }(), a = function() {
+        function e(e) {
+            var t = this;
+            t.module_id = e, t.templates = {}, t.styles = {}, t.components = {};
+        }
+        function t(e, t) {
+            var n, o = document.head || document.getElementsByTagName("head")[0];
+            for (var r in t) n = (t[r] || "").trim(), n && t.hasOwnProperty(r) && (style = document.createElement("style"), 
+            style.setAttribute("type", "text/css"), style.styleSheet ? style.styleSheet.cssText = n : style.insertBefore(document.createTextNode(n), null), 
+            o.insertBefore(style, null), e[r] = style);
+        }
+        function o(e, t) {
+            var n, o;
+            for (o in t) if (n = t[o], n && "string" == typeof n && t.hasOwnProperty(o)) try {
+                e[o] = new Function("return (" + n + ");")();
+            } catch (e) {
+                throw console.log("Exception: unable to process component [" + o + "]"), e;
+            }
+        }
+        return e.prototype = {
+            constructor: e,
+            update: function(e) {
+                if ("object" === i(e)) {
+                    var r = this, c = n.tools.copy;
+                    c(e.templates, r.templates, !0), t(r.styles, e.styles), o(r.components, e.components);
                 }
             },
-            get: function(t, n) {
+            get: function(e, t) {
                 var o = this, r = "";
-                for (var c in t) t.hasOwnProperty(c) && (r += (r ? "&" : "") + encodeURIComponent(c) + "=" + encodeURIComponent(t[c].join("|")));
-                e.request({
+                for (var i in e) e.hasOwnProperty(i) && (r += (r ? "&" : "") + encodeURIComponent(i) + "=" + encodeURIComponent(e[i].join("|")));
+                n.request({
                     url: "mad/module/" + o.module_id + "/resources",
                     data: r,
-                    on_success: function(e) {
-                        if (o.update(e.resources), "function" == typeof n) try {
-                            n.call(t);
-                        } catch (t) {
-                            throw t;
+                    on_success: function(n) {
+                        if (o.update(n.resources), "function" == typeof t) try {
+                            t.call(e);
+                        } catch (e) {
+                            throw e;
                         }
                     }
                 });
             }
-        }, t;
-    }(), u = function() {
-        function t(t) {
-            if ("string" != typeof t) throw "The module [id] must be a string.";
-            var e = this;
-            e.id = t, e.resources = new i(e);
+        }, e;
+    }(), l = function() {
+        function e(e) {
+            if ("string" != typeof e) throw "The module [id] must be a string.";
+            var t = this;
+            t.id = e, t.resources = new a(e);
         }
-        return t.prototype = {
-            constructor: t,
+        return e.prototype = {
+            constructor: e,
             initialize: function() {}
-        }, t.initialize = function(t) {
-            var e = t.id, n = t.source, r = t.resources;
-            if (!e || !n) return void console.log("Exception: module not found [" + e + "]");
-            var c = new u(e);
+        }, e.initialize = function(e) {
+            var t = e.id, n = e.source, o = e.resources;
+            if (!t || !n) return void console.log("Exception: module not found [" + t + "]");
+            var i = new l(t);
             try {
-                new Function("return (" + n + ");")().call(c, o), c.resources.update(r), console.log("Initializing module: ", c), 
-                c.initialize();
-            } catch (t) {
-                console.log("Exception: ", t);
+                new Function("return (" + n + ");")().call(i, r), i.resources.update(o), console.log("Initializing module: ", i), 
+                i.initialize();
+            } catch (e) {
+                console.log("Exception: ", e);
             }
-            return c;
-        }, t;
-    }(), a = function() {
-        function t(t, r, i) {
-            var u = {
-                module_id: t,
+            return i;
+        }, e;
+    }(), s = function() {
+        function e(e, r, i) {
+            var c = {
+                module_id: e,
                 callback: r,
                 data: i
             };
-            e.request({
-                url: "mad/module/" + t,
-                context: u,
-                before_request: n,
-                on_success: o,
-                on_error: c
+            return new u({
+                url: "mad/module/" + e,
+                context: c,
+                before: t,
+                succeeded: n,
+                failed: o
             });
         }
-        function n() {
+        function t() {
             console.log("Requesting module: ", this.module_id);
         }
-        function o(t) {
-            if (!t) return console.log("Exception: Module could not be loaded.");
-            if (t.exception) return console.log("Exception: " + (t.exception || "Module could not be loaded."));
-            var e = this, n = e.module_id, o = u.initialize(t);
+        function n(e) {
+            if (!e) return console.log("Exception: Module could not be loaded.");
+            if (e.exception) return console.log("Exception: " + (e.exception || "Module could not be loaded."));
+            var t = this, n = t.module_id, o = l.initialize(e);
             if (o) {
-                r[n] = o;
-                var c = e.data, a = c instanceof Array ? c : [ c ];
-                void 0 == c && (a = void 0), (this.callback || i).apply(o, a);
+                c[n] = o;
+                var i = t.data, u = i instanceof Array ? i : [ i ];
+                void 0 == i && (u = void 0), (this.callback || r).apply(o, u);
             }
         }
-        function c(t) {
-            throw t;
+        function o(e) {
+            throw e;
         }
-        function i() {}
-        return t;
+        function r() {}
+        return e;
     }();
-    n.get = function(t, e, n) {
-        var o = r[t], i = e, u = n;
-        return "[object Function]" !== c.call(e) && (i = null, u = e), o && i ? i.call(o, u) : void a(t, i, u);
-    }, o = u.initialize({
+    r = l.initialize({
         id: "shared",
         source: "function shared() {return false;}"
-    }), e.modules = n, e.version = "0.0.1", t.MAD = e;
-}(window), function(t, e, n) {
-    function o(t) {
-        if (this instanceof o == !1) return new o(t);
-        var e, n, i = this, u = i.transport = c();
-        for (var a in t) e = r(i[a]), n = t[a], !t.hasOwnProperty(a) || "undefined" !== e && e !== r(n) || (i[a] = n);
-        var s = i.context || i, l = (i.method || "get").toUpperCase(), f = i.url, d = i.data;
-        u.onreadystatechange = function() {
-            i.on_ready_state_change.call(i);
-        }, u.open(l, f, !0), "POST" === l ? u.setRequestHeader("Content-type", "application/x-www-form-urlencoded") : d && (f = f + (f.indexOf("?") > -1 ? "&" : "?") + d, 
-        d = null), i.before_request.call(s, i, t), u.send(d);
+    }), n.get_module = o, n.version = "0.0.1", e.MAD = n;
+}(window, function(e, t) {
+    function n(e, t, o) {
+        var r, i, c = u(e);
+        if (o = o === !0, "date" === c) return t = new Date(), t.setTime(e.getTime()), t;
+        if ("array" === c && o === !1) {
+            var a = e.length;
+            for (t = void 0 === t ? [] : t; a--; ) t[a] = n(e[a], t[a], o);
+            return t;
+        }
+        if ("object" === c) {
+            t = void 0 === t ? {} : t;
+            for (var l in e) e.hasOwnProperty(l) && (r = e[l], i = t[l], t[l] = n(r, i, o));
+            return t;
+        }
+        return o && void 0 !== t ? t : e;
     }
-    var r = t.tools.get_type, c = e.XMLHttpRequest ? function() {
-        return new XMLHttpRequest();
-    } : function() {
-        return new ActiveXObject("Microsoft.XMLHTTP");
-    };
-    o.prototype = {
-        constructor: o,
-        url: "",
-        method: "GET",
-        before_request: function(t, e) {},
-        on_complete: function(t) {},
-        on_success: function(t) {},
-        on_error: function(t) {},
-        on_ready_state_change: function(t) {
-            var e, n, o = this, r = o.transport, c = r.readyState, i = o.context || o;
-            if (4 !== c) return null;
-            try {
-                e = r.status;
-            } catch (t) {
-                return null;
-            }
-            if (200 !== e) return null;
-            var u, a = r.responseText;
-            try {
-                n = new Function("return (" + a + ")")(), o.on_success.call(i, n);
-            } catch (t) {
-                u = t, o.on_error.call(i, t);
-            }
-            o.on_complete.call(i, u, n);
-        }
-    }, t.request = o;
-}(MAD, window, document), function(t) {
-    function e(t, n, o) {
-        var r, c, u = i(t);
-        if (o = o === !0, "date" === u) return n = new Date(), n.setTime(t.getTime()), n;
-        if ("array" === u && o === !1) {
-            var a = t.length;
-            for (n = void 0 === n ? [] : n; a--; ) n[a] = e(t[a], n[a], o);
-            return n;
-        }
-        if ("object" === u) {
-            n = void 0 === n ? {} : n;
-            for (var s in t) t.hasOwnProperty(s) && (r = t[s], c = n[s], n[s] = e(r, c, o));
-            return n;
-        }
-        return o && void 0 !== n ? n : t;
-    }
-    function n() {
-        for (var t = arguments, n = t.length, o = {}, r = 0; r < n; r++) e(t[r], o);
+    function o() {
+        for (var e = arguments, t = e.length, o = {}, r = 0; r < t; r++) n(e[r], o);
         return o;
     }
-    function o(t, e) {
-        for (var n, o = t.length, r = 0, c = []; r < o; r++) n = t[r], e(n) && (c[c.length] = n);
-        return c;
+    function r(e, t) {
+        for (var n, o = e.length, r = 0, i = []; r < o; r++) n = e[r], t(n) && (i[i.length] = n);
+        return i;
     }
-    function r(t) {
-        for (var e, n, o, r, i, a, s, l = u, f = c(t), d = f.length, p = 0, h = ""; p < d; ) e = f.charCodeAt(p++), 
-        n = f.charCodeAt(p++), o = f.charCodeAt(p++), r = e >> 2, i = (3 & e) << 4 | n >> 4, 
-        a = (15 & n) << 2 | o >> 6, s = 63 & o, isNaN(n) ? a = s = 64 : isNaN(o) && (s = 64), 
-        h = h + l.charAt(r) + l.charAt(i) + l.charAt(a) + l.charAt(s);
+    function i(e) {
+        for (var t, n, o, r, i, u, l, s = a, d = c(e), f = d.length, p = 0, h = ""; p < f; ) t = d.charCodeAt(p++), 
+        n = d.charCodeAt(p++), o = d.charCodeAt(p++), r = t >> 2, i = (3 & t) << 4 | n >> 4, 
+        u = (15 & n) << 2 | o >> 6, l = 63 & o, isNaN(n) ? u = l = 64 : isNaN(o) && (l = 64), 
+        h = h + s.charAt(r) + s.charAt(i) + s.charAt(u) + s.charAt(l);
         return h;
     }
-    function c(t) {
-        for (var e, n = t.replace(/\r\n/g, "\n"), o = n.length, r = 0, c = ""; o--; ) e = n.charCodeAt(r++), 
-        e < 128 ? c += String.fromCharCode(e) : e > 127 && e < 2048 ? (c += String.fromCharCode(e >> 6 | 192), 
-        c += String.fromCharCode(63 & e | 128)) : (c += String.fromCharCode(e >> 12 | 224), 
-        c += String.fromCharCode(e >> 6 & 63 | 128), c += String.fromCharCode(63 & e | 128));
-        return c;
+    function c(e) {
+        for (var t, n = e.replace(/\r\n/g, "\n"), o = n.length, r = 0, i = ""; o--; ) t = n.charCodeAt(r++), 
+        t < 128 ? i += String.fromCharCode(t) : t > 127 && t < 2048 ? (i += String.fromCharCode(t >> 6 | 192), 
+        i += String.fromCharCode(63 & t | 128)) : (i += String.fromCharCode(t >> 12 | 224), 
+        i += String.fromCharCode(t >> 6 & 63 | 128), i += String.fromCharCode(63 & t | 128));
+        return i;
     }
-    var i = function() {
-        function t(t) {
-            var o = typeof t;
-            return null === t ? "null" : "object" === o || "function" === o ? e[n.call(t)] || "object" : o;
+    var u = function() {
+        function e(e) {
+            var o = typeof e;
+            return null === e ? "null" : "object" === o || "function" === o ? n[t.call(e)] || "object" : o;
         }
-        var e = {
+        var t = Object.prototype.toString, n = {
             "[object Boolean]": "boolean",
             "[object Number]": "number",
             "[object String]": "string",
@@ -216,15 +216,15 @@ String.prototype.trim || (String.prototype.trim = function() {
             "[object RegExp]": "regexp",
             "[object Object]": "object",
             "[object Error]": "error"
-        }, n = e.toString;
-        return t;
-    }(), u = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    t.tools = {
-        get_type: i,
-        copy: e,
-        merge: n,
-        filter: o,
-        encode_base64: r,
+        };
+        return e;
+    }(), a = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    return {
+        get_type: u,
+        copy: n,
+        merge: o,
+        filter: r,
+        encode_base64: i,
         encode_utf8: c
     };
-}(MAD);
+}(window, document));

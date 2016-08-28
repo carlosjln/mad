@@ -19,7 +19,7 @@ let mad = Path.join( src_directory, 'mad.js' );
 let mad_request = Path.join( src_directory, 'mad.request.js' );
 let mad_tools = Path.join( src_directory, 'mad.tools.js' );
 
-let files = [ mad, mad_request, mad_tools ];
+let files = [ mad ];
 
 let package_json = JSON.parse( FS.readFileSync( 'package.json', 'utf8' ) );
 let version = package_json.version;

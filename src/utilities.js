@@ -117,6 +117,7 @@
 	// ENCODE/DECODE BASE64
 	// TAKEN FROM https://github.com/carlosjln/epic
 	var B64KEY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+	
 	function encode_base64( input ) {
 		var key = B64KEY;
 

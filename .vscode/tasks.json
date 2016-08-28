@@ -13,5 +13,5 @@
 		"${workspaceRoot}\\build.js",
 		"${workspaceRoot}"
 	],
-	"showOutput": "always"
+	"showOutput": "silent"
 }
