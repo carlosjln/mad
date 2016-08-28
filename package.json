@@ -1,0 +1,25 @@
+{
+	"name": "mad",
+	"version": "1.0.0",
+	"description": "Modular Aplication Development",
+	"main": "",
+	"dependencies": {},
+	"devDependencies": {
+		"fs-extra": "^0.30.0",
+		"gulp": "^3.9.1",
+		"uglify-js": "^2.7.3"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/carlosjln/MAD.git"
+	},
+	"author": "Carlos J. Lopez",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/carlosjln/MAD/issues"
+	},
+	"homepage": "https://github.com/carlosjln/MAD#readme"
+}

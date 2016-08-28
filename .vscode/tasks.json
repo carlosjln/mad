@@ -1,0 +1,17 @@
+{
+	"version": "0.1.0",
+	"windows": {
+		"command": "C:\\Program Files\\nodejs\\node.exe"
+	},
+	"linux": {
+		"command": "/usr/bin/node"
+	},
+	"isShellCommand": true,
+	"suppressTaskName": true,
+	"isBuildCommand": true,
+	"args": [
+		"${workspaceRoot}\\build.js",
+		"${workspaceRoot}"
+	],
+	"showOutput": "always"
+}

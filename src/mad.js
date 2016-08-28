@@ -1,15 +1,5 @@
-/*!
- * MAD.js
- * Modular Application Development
- * https://github.com/carlosjln/mad
- *
- * Author: Carlos J. Lopez
- * https://github.com/carlosjln
- */
+// POLYFILS
 
-/**
- * POLYFILS
- */
 if( !String.prototype.trim ) {
 	String.prototype.trim = function () {
 		return this.replace( /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '' );
@@ -126,7 +116,10 @@ if( !String.prototype.trim ) {
 					try {
 						collection[ item ] = new Function( 'return (' + source + ');' )();
 					} catch( exception ) {
-						console.log( 'Exception: unable to process component [' + item + ']' );
+						if( DEBUG ) {
+							console.log( 'Exception: unable to process component [' + item + ']' );
+						}
+
 						throw exception;
 					}
 				}
@@ -162,9 +155,9 @@ if( !String.prototype.trim ) {
 			var resources = settings.resources;
 
 			if( !id || !source ) {
-				///#DEBUG
-				console.log( 'Exception: module not found [' + id + ']' );
-				///#ENDDEBUG
+				if( DEBUG ) {
+					console.log( 'Exception: module not found [' + id + ']' );
+				}
 				return;
 			}
 
@@ -180,13 +173,16 @@ if( !String.prototype.trim ) {
 				// REGISTER REQUIRED RESOURCES
 				instance.resources.update( resources );
 
-				///#DEBUG
-				console.log( 'Initializing module: ', instance );
-				///#ENDDEBUG
+				if( DEBUG ) {
+					console.log( 'Initializing module: ', instance );
+				}
 
 				instance.initialize();
+
 			} catch( exception ) {
-				console.log( 'Exception: ', exception );
+				if( DEBUG ) {
+					console.log( 'Exception: ', exception );
+				}
 			}
 
 			return instance;
