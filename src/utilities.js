@@ -1,4 +1,5 @@
-( function ( mad ) {
+( function ( MAD ) {
+	
 	// OBJECT TYPE DETECTION
 	// TAKEN FROM https://github.com/carlosjln/epic
 	var get_type = ( function () {
@@ -117,7 +118,7 @@
 	// ENCODE/DECODE BASE64
 	// TAKEN FROM https://github.com/carlosjln/epic
 	var B64KEY = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-	
+
 	function encode_base64( input ) {
 		var key = B64KEY;
 
@@ -176,23 +177,7 @@
 		return output;
 	}
 
-	function create_style( css ) {
-		var style = document.createElement( 'style' );
-		style.setAttribute( 'type', 'text/css' );
-
-		if( style.styleSheet ) { // IE
-			style.styleSheet.cssText = css;
-
-		} else { // the world
-			style.insertBefore( document.createTextNode( css ), null );
-		}
-
-		document.getElementsByTagName( 'head' )[ 0 ].insertBefore( style, null );
-
-		return style;
-	}
-
-	mad.tools = {
+	MAD.utilities = {
 		get_type: get_type,
 		copy: copy,
 		merge: merge,

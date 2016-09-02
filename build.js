@@ -1,25 +1,28 @@
 'use strict';
 
-const EOL = require('os').EOL;
+const EOL = require( 'os' ).EOL;
 
 const FS = require( 'fs' );
 const Path = require( 'path' );
 const UglifyJS = require( 'uglify-js' );
 
 let args = process.argv.slice( 2 );
-let workspace = args[ 0 ];
+let workspace_directory = args[ 0 ];
 
-let src_directory = Path.join( workspace, 'src' );
-let build_directory = Path.join( workspace, 'build' );
+let src_directory = Path.join( workspace_directory, 'src' );
+let build_directory = Path.join( workspace_directory, 'build' );
 
 // SOURCE FILES
-let header = FS.readFileSync( Path.join( src_directory, 'header.txt' ), 'utf-8' );
-
 let mad = Path.join( src_directory, 'mad.js' );
-let mad_request = Path.join( src_directory, 'mad.request.js' );
-let mad_tools = Path.join( src_directory, 'mad.tools.js' );
+let polyfils = Path.join( src_directory, 'polyfils.js' );
+let utilities = Path.join( src_directory, 'utilities.js' );
+let html = Path.join( src_directory, 'html.js' );
+let xhr = Path.join( src_directory, 'xhr.js' );
+let resource_collection = Path.join( src_directory, 'resource_collection.js' );
+let mod = Path.join( src_directory, 'module.js' );
+let loader = Path.join( src_directory, 'loader.js' );
 
-let files = [ mad ];
+let files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, loader ];
 
 let package_json = JSON.parse( FS.readFileSync( 'package.json', 'utf8' ) );
 let version = package_json.version;
@@ -36,8 +39,6 @@ function build( files, output, options ) {
 	} catch( exception ) {
 		return console.log( exception );
 	}
-
-	console.log( EOL );
 }
 
 let dev_options = {
@@ -54,12 +55,12 @@ let dev_options = {
 	},
 
 	output: {
-		preamble: header,
 		beautify: {
 			indent_level: 4,
-			bracketize: true,
+			bracketize: true
+		},
 
-		}
+		comments: /license MIT/
 	}
 };
 
@@ -75,7 +76,7 @@ let pro_options = {
 	},
 
 	output: {
-		preamble: header
+		comments: /license MIT/
 	}
 };
 
