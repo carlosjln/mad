@@ -20,16 +20,16 @@ let html = Path.join( src_directory, 'html.js' );
 let xhr = Path.join( src_directory, 'xhr.js' );
 let resource_collection = Path.join( src_directory, 'resource_collection.js' );
 let mod = Path.join( src_directory, 'module.js' );
-let loader = Path.join( src_directory, 'loader.js' );
+let api = Path.join( src_directory, 'api.js' );
 
-let files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, loader ];
+let files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, api ];
 
 let package_json = JSON.parse( FS.readFileSync( 'package.json', 'utf8' ) );
 let version = package_json.version;
 let write_flags = { 'flags': 'w+' };
 
 function build( files, output, options ) {
-	console.log( 'MINIFYING:' + files.join( ', ' ) );
+	// console.log( 'MINIFYING:' + files.join( ', ' ) );
 
 	try {
 		let minified = UglifyJS.minify( files, options );
@@ -80,6 +80,6 @@ let pro_options = {
 	}
 };
 
-build( files, Path.join( build_directory, 'mad.dev.' + version + '.js' ), dev_options );
+build( files, Path.join( build_directory, 'mad.' + version + '.js' ), dev_options );
 console.log( '-' );
 build( files, Path.join( build_directory, 'mad.min.' + version + '.js' ), pro_options );

@@ -1,5 +1,5 @@
 ( function ( MAD ) {
-	
+
 	// OBJECT TYPE DETECTION
 	// TAKEN FROM https://github.com/carlosjln/epic
 	var get_type = ( function () {
@@ -177,13 +177,57 @@
 		return output;
 	}
 
+	function serialize( object, prefix ) {
+		var params = [];
+		var key;
+		var value;
+
+		for( var name in object ) {
+			if( object.hasOwnProperty( name ) ) {
+				key = prefix ? prefix + "[" + name + "]" : name;
+				value = object[ name ];
+				params.add( typeof value == "object" ? serialize( value, key ) : encodeURIComponent( key ) + "=" + encodeURIComponent( value ) );
+			}
+		}
+
+		return params.join( "&" );
+	}
+
+	var UID = ( function () {
+		// UNIQUE IDENTIFIER GENERATOR
+
+		var seed = ( new Date() ).getTime();
+
+		function uid( prefix ) {
+			return ( prefix || '' ) + ++seed;
+		}
+
+		return uid;
+	})();
+
+	function ObjectID( object ) {
+		return UID( 'OID-' );
+	}
+
+	function set_oid( object ) {
+		if( !object ) {
+			return null;
+		}
+
+		return object.oid = UID( 'OID-' );
+	}
+
 	MAD.utilities = {
 		get_type: get_type,
 		copy: copy,
 		merge: merge,
 		filter: filter,
 		encode_base64: encode_base64,
-		encode_utf8: encode_utf8
+		encode_utf8: encode_utf8,
+		serialize: serialize,
+		UID: UID,
+		ObjectID: ObjectID,
+		set_oid: set_oid,
 	};
 
 })( MAD );

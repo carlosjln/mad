@@ -1,20 +1,25 @@
 ( function ( MAD ) {
 
-	var utils = MAD.utilities;
-	var copy = utils.copy;
-	var get_type = utils.get_type;
+	var utilities = MAD.utilities;
+	var copy = utilities.copy;
+	var get_type = utilities.get_type;
+	var set_oid = utilities.set_oid;
 
 	var XHR = MAD.XHR;
 	var create_style = MAD.html.create_style;
 
+	var data_storage = {};
+
 	function resource_collection( module_id ) {
-		var self = this;
+		var oid = set_oid( this );
 
-		self.module_id = module_id;
+		this.templates = {};
+		this.styles = {};
+		this.components = {};
 
-		self.templates = {};
-		self.styles = {};
-		self.components = {};
+		data_storage[ oid ] = {
+			module_id: module_id
+		};
 	}
 
 	resource_collection.prototype = {
@@ -25,33 +30,34 @@
 				return;
 			};
 
-			var self = this;
-
-			copy( resources.templates, self.templates, true );
-			initialize_styles( self.styles, resources.styles );
-			initialize_components( self.components, resources.components );
+			copy( resources.templates, this.templates, true );
+			initialize_styles( this.styles, resources.styles );
+			initialize_components( this.components, resources.components );
 		},
 
-		get: function ( resources, callback ) {
-			var query = '';
+		get: function ( resources, callback, context ) {
+			var module_id = data_storage[ this.oid ].module_id
+			return MAD.get_resources( module_id, resources, callback, context );
 
-			for( var resource in resources ) {
-				if( resources.hasOwnProperty( resource ) ) {
-					query += ( query ? '&' : '' ) + encodeURIComponent( resource ) + '=' + encodeURIComponent( resources[ resource ].join( '|' ) );
-				}
-			}
+			// var query = '';
 
-			new XHR( {
-				url: 'mad/module/' + this.module_id + '/resources',
-				data: query,
+			// for( var resource in resources ) {
+			// 	if( resources.hasOwnProperty( resource ) ) {
+			// 		query += ( query ? '&' : '' ) + encodeURIComponent( resource ) + '=' + encodeURIComponent( resources[ resource ].join( '|' ) );
+			// 	}
+			// }
 
-				context: {
-					collection: this,
-					callback: callback || do_nothing
-				},
+			// new XHR( {
+			// 	url: 'mad/module/' + this.module_id + '/resources',
+			// 	data: query,
 
-				succeeded: succeeded
-			});
+			// 	context: {
+			// 		collection: this,
+			// 		callback: callback || do_nothing
+			// 	},
+
+			// 	succeeded: succeeded
+			// });
 		}
 	};
 

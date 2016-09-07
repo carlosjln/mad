@@ -36,15 +36,15 @@
 
 		// BRACE YOURSELF
 		try {
-			// EVALUATE THE SOURCE CODE AND MERGE IT WITH THE NEW MODULE INSTANCE 
-			( new Function( 'return (' + source + ');' )() ).call( instance, MAD );
-
 			// REGISTER REQUIRED RESOURCES
 			instance.resources.update( resources );
 
-			if( DEBUG ) {
-				console.log( 'Initializing module: ', instance );
-			}
+			// EVALUATE THE SOURCE CODE AND MERGE IT WITH THE NEW MODULE INSTANCE 
+			( new Function( 'return (' + source + ');' )() ).call( instance, MAD );
+
+			// if( DEBUG ) {
+			// 	console.log( 'Initializing module: ', instance );
+			// }
 
 			instance.initialize.apply( instance, params );
 

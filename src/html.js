@@ -24,8 +24,16 @@
 		return style;
 	}
 
+	function register_tags( tag ) {
+		// flat arugments
+		// identify object type
+		// register tags found as string or tagName
+		document.registerElement( tag );
+	}
+
 	MAD.html = {
-		create_style: create_style
+		create_style: create_style,
+		register_tags: register_tags
 	};
 
 })( MAD, document );
