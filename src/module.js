@@ -8,7 +8,7 @@
 		}
 
 		this.id = id;
-		this.resources = new ResourceCollection( id );
+		this.resources = new ResourceCollection( this );
 	}
 
 	module.prototype = {
@@ -28,6 +28,7 @@
 			if( DEBUG ) {
 				console.log( 'Exception: module not found [' + id + ']' );
 			}
+			
 			return;
 		}
 

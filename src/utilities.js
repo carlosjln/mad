@@ -205,8 +205,8 @@
 		return uid;
 	})();
 
-	function ObjectID( object ) {
-		return UID( 'OID-' );
+	function ObjectID( ) {
+		return UID( 'OID' );
 	}
 
 	function set_oid( object ) {
@@ -214,7 +214,7 @@
 			return null;
 		}
 
-		return object.oid = UID( 'OID-' );
+		return object.oid = UID( 'OID' );
 	}
 
 	MAD.utilities = {

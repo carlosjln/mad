@@ -31,8 +31,8 @@ window.MAD = window.MAD || {
         var o, i, c = l(t);
         if (r = r === !0, "date" === c) return n = new Date(), n.setTime(t.getTime()), n;
         if ("array" === c && r === !1) {
-            var u = t.length;
-            for (n = void 0 === n ? [] : n; u--; ) n[u] = e(t[u], n[u], r);
+            var s = t.length;
+            for (n = void 0 === n ? [] : n; s--; ) n[s] = e(t[s], n[s], r);
             return n;
         }
         if ("object" === c) {
@@ -51,11 +51,11 @@ window.MAD = window.MAD || {
         return i;
     }
     function o(t) {
-        for (var e, n, r, o, c, u, a, l = s, f = i(t), d = f.length, p = 0, h = ""; p < d; ) e = f.charCodeAt(p++), 
-        n = f.charCodeAt(p++), r = f.charCodeAt(p++), o = e >> 2, c = (3 & e) << 4 | n >> 4, 
-        u = (15 & n) << 2 | r >> 6, a = 63 & r, isNaN(n) ? u = a = 64 : isNaN(r) && (a = 64), 
-        h = h + l.charAt(o) + l.charAt(c) + l.charAt(u) + l.charAt(a);
-        return h;
+        for (var e, n, r, o, c, s, a, l = u, f = i(t), p = f.length, h = 0, d = ""; h < p; ) e = f.charCodeAt(h++), 
+        n = f.charCodeAt(h++), r = f.charCodeAt(h++), o = e >> 2, c = (3 & e) << 4 | n >> 4, 
+        s = (15 & n) << 2 | r >> 6, a = 63 & r, isNaN(n) ? s = a = 64 : isNaN(r) && (a = 64), 
+        d = d + l.charAt(o) + l.charAt(c) + l.charAt(s) + l.charAt(a);
+        return d;
     }
     function i(t) {
         for (var e, n = t.replace(/\r\n/g, "\n"), r = n.length, o = 0, i = ""; r--; ) e = n.charCodeAt(o++), 
@@ -70,11 +70,11 @@ window.MAD = window.MAD || {
         o.add("object" == typeof r ? c(r, n) : encodeURIComponent(n) + "=" + encodeURIComponent(r)));
         return o.join("&");
     }
-    function u(t) {
-        return f("OID-");
+    function s() {
+        return f("OID");
     }
     function a(t) {
-        return t ? t.oid = f("OID-") : null;
+        return t ? t.oid = f("OID") : null;
     }
     var l = function() {
         function t(t) {
@@ -93,7 +93,7 @@ window.MAD = window.MAD || {
             "[object Error]": "error"
         }, n = e.toString;
         return t;
-    }(), s = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", f = function() {
+    }(), u = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", f = function() {
         function t(t) {
             return (t || "") + ++e;
         }
@@ -109,7 +109,7 @@ window.MAD = window.MAD || {
         encode_utf8: i,
         serialize: c,
         UID: f,
-        ObjectID: u,
+        ObjectID: s,
         set_oid: a
     };
 }(MAD), function(t, e) {
@@ -128,59 +128,65 @@ window.MAD = window.MAD || {
         register_tags: r
     };
 }(MAD, document), function(t) {
-    function e(t) {
-        if (this instanceof e == !1) return new e(t);
-        var r = this.options = i(t, {}), o = this.transport = u(), a = (r.method || "get").toUpperCase(), l = r.query, s = r.url, f = this;
-        o.onreadystatechange = function() {
-            n.call(f, r);
-        }, "object" == typeof l && (l = c(l)), "POST" === a ? o.setRequestHeader("Content-type", "application/x-www-form-urlencoded") : l && (s = s + (s.indexOf("?") > -1 ? "&" : "?") + l, 
-        l = null), o.open(a, s, !0), (r.before || this.before).call(this, r), o.send(l);
+    function e(t, r) {
+        if (this instanceof e == !1) return new e(t, r);
+        "object" == typeof t && (r = t, t = r.url), o(r, this);
+        var i = this.transport = s(), c = this;
+        i.onreadystatechange = function() {
+            n.call(c);
+        }, this.start();
     }
     function n(t) {
-        n.onreadystatechange = void 0;
         var e, n = this.transport, r = n.readyState;
         if (4 !== r) return null;
         try {
             e = n.status;
-        } catch (t) {
-            return null;
-        }
+        } catch (t) {}
         if (200 !== e) return null;
-        var o, i = t.succeeded || this.succeeded, c = t.completed || this.completed, u = n.responseText;
+        var o, i = n.responseText, c = this.context || this;
         try {
-            i.call(this, u);
+            this.succeeded.call(c, i);
         } catch (t) {
-            o = t, failed.call(context, t);
+            o = t, this.failed.call(c, t);
         }
-        c.call(context, u, o);
+        this.completed.call(thcontextis, i, o);
     }
-    function r() {}
-    var o = t.utilities, i = (o.get_type, o.copy), c = o.serialize, u = window.XMLHttpRequest ? function() {
+    var r = t.utilities, o = (r.get_type, r.copy), i = r.serialize, c = function() {}, s = window.XMLHttpRequest ? function() {
         return new XMLHttpRequest();
     } : function() {
         return new ActiveXObject("Microsoft.XMLHTTP");
     };
     e.prototype = {
         constructor: e,
-        url: "",
+        url: null,
         method: "GET",
-        before: r,
-        succeeded: r,
-        failed: r,
-        completed: r
+        before_send: c,
+        succeeded: c,
+        failed: c,
+        completed: c,
+        start: function() {
+            var t = this.transport, e = this.context || this, n = this.method.toUpperCase(), r = this.data, o = this.url;
+            if (o && ("object" == typeof r && (r = i(r)), "POST" === n ? t.setRequestHeader("Content-type", "application/x-www-form-urlencoded") : r && (o = o + (o.indexOf("?") > -1 ? "&" : "?") + r, 
+            r = null), this.before_send.call(e) !== !1)) return t.open(n, o, !0), t.send(r), 
+            this;
+        }
     }, t.XHR = e;
 }(MAD), function(t) {
     function e(t) {
-        var e = u(this);
-        this.templates = {}, this.styles = {}, this.components = {}, l[e] = {
-            module_id: t
+        var e = l(this);
+        this.templates = {}, this.styles = {}, this.components = {}, f[e] = {
+            module: t
         };
     }
-    function n(t, e) {
-        var n, r;
-        for (var o in e) n = (e[o] || "").trim(), e.hasOwnProperty(o) && (r = a(n)) && (t[o] = r);
+    function n(t) {
+        this.callback.call(this.collection.update(t, !0));
     }
     function r(t, e) {
+        var n, r, o;
+        for (var i in e) n = (e[i] || "").trim(), e.hasOwnProperty(i) && (r = u(n)) && (o = t[i], 
+        o && o.parentNode.removeChild(o), t[i] = r);
+    }
+    function o(t, e) {
         var n, r;
         for (r in e) if (n = e[r], n && "string" == typeof n && e.hasOwnProperty(r)) try {
             t[r] = new Function("return (" + n + ");")();
@@ -188,22 +194,37 @@ window.MAD = window.MAD || {
             throw console.log("Exception: unable to process component [" + r + "]"), t;
         }
     }
-    var o = t.utilities, i = o.copy, c = o.get_type, u = o.set_oid, a = (t.XHR, t.html.create_style), l = {};
+    function i(t, e) {
+        if (!e) return [];
+        for (var n, r = [], o = e.length; o--; ) n = e[o], t[n] || r.add(n);
+        return r;
+    }
+    var c = t.utilities, s = c.copy, a = c.get_type, l = c.set_oid, u = (t.XHR, t.html.create_style), f = {};
     e.prototype = {
         constructor: e,
-        update: function(t) {
-            "object" === c(t) && (i(t.templates, this.templates, !0), n(this.styles, t.styles), 
-            r(this.components, t.components));
+        update: function(t, e) {
+            if ("object" === a(t)) return s(t.templates, this.templates, !e), r(this.styles, t.styles), 
+            o(this.components, t.components), this;
         },
-        get: function(e, n, r) {
-            var o = l[this.oid].module_id;
-            return t.get_resources(o, e, n, r);
+        get: function(e, r, o) {
+            var c, s, a, l = f[this.oid], u = l.module;
+            o ? (c = e.templates, s = e.styles, a = e.components) : (c = i(this.templates, e.templates), 
+            s = i(this.styles, e.styles), a = i(this.components, e.components));
+            var p = {
+                templates: c,
+                styles: s,
+                components: a
+            }, h = {
+                callback: r,
+                collection: this
+            };
+            return t.api.fetch_resources(u.id, p, n, h);
         }
     }, t.ResourceCollection = e;
 }(MAD), function(t) {
     function e(t) {
         if ("string" != typeof t) throw "The module [id] must be a string.";
-        this.id = t, this.resources = new n(t);
+        this.id = t, this.resources = new n(this);
     }
     var n = t.ResourceCollection;
     e.prototype = {
@@ -212,95 +233,94 @@ window.MAD = window.MAD || {
     }, e.initialize = function(n, r) {
         var o = n.id, i = n.source, c = n.resources;
         if (!o || !i) return void console.log("Exception: module not found [" + o + "]");
-        var u = new e(o);
+        var s = new e(o);
         try {
-            u.resources.update(c), new Function("return (" + i + ");")().call(u, t), u.initialize.apply(u, r);
+            s.resources.update(c), new Function("return (" + i + ");")().call(s, t), s.initialize.apply(s, r);
         } catch (t) {
             return console.log("Exception: ", t), null;
         }
-        return u;
+        return s;
     }, t.Module = e;
 }(MAD), function(t, e) {
     function n(t, e, n) {
-        var r = f(e);
-        "function" !== r && (n = e, e = m), n = void 0 === n ? [] : n, n = "array" === f(n) ? n : [ n ];
-        var o = p[t];
-        return o ? (o.initialize.apply(o, n), e.apply(o, n), o) : (i(t, e, n), null);
+        return h[f].fetch_module(t, e, n);
     }
     function r(t, e, n, r) {
-        "boolean" === f(n) && (r = n, n = m), console.log("fetching resources", e);
+        return h[f].fetch_resources(t, e, n, r);
     }
-    function o() {
-        return "undefined" != typeof e && e.process && "renderer" === e.process.type ? "electron" : "web";
-    }
-    function i(t, e, n) {
-        var r = g[h] || m, o = {
+    function o(t, e, r) {
+        var o = l(e);
+        "function" !== o && (r = e, e = p), r = void 0 === r ? [] : r, r = "array" === l(r) ? r : [ r ];
+        var c = u[t];
+        if (c) return c.initialize.apply(c, r), e.apply(c, r), c;
+        var s = {
             id: t,
             callback: e,
-            params: n
-        };
-        r(t, c, o);
-    }
-    function c(t) {
-        var e = this.params, n = this.callback, r = this.params, o = a.initialize(t, r);
-        o && (p[e] = o, n.apply(o, r));
-    }
-    function u(t, e, n, r) {
-        g[h] || m, {
-            id: id,
-            callback: n,
             params: r
         };
+        n(t, i, s);
     }
-    var a = t.Module, l = t.XHR, s = t.utilities, f = s.get_type, d = s.UID, p = {}, h = o(), m = (function() {
-        function t() {
-            d();
-        }
-        function e() {}
-        function n() {}
-        return {
-            add: t,
-            remove: e,
-            find: n
-        };
-    }(), function() {}), y = function() {
-        function t(t, i) {
-            new l({
-                url: "mad/module/" + t,
-                module_id: t,
-                callback: i || m,
-                before: e,
-                succeeded: n,
-                failed: r,
-                completed: o
-            });
-        }
-        function e() {
-            console.log("fetching module: ", this.module_id);
-        }
-        function n(t) {
-            if (!t) return console.log("WARNING: Module not loaded.");
-            var e, n;
-            try {
-                e = new Function("return (" + t + ")")();
-            } catch (t) {
-                n = t;
-            }
-            return (n = n || e.exception) ? console.log("WARNING: " + n) : void this.callback.apply(this, e);
-        }
-        function r(t) {
+    function i(t) {
+        var e = this.id, n = this.callback, r = this.params, o = s.initialize(t, r);
+        o && (u[e] = o, n.apply(o, r));
+    }
+    function c() {
+        return "undefined" != typeof e && e.process && "renderer" === e.process.type ? "electron" : "web";
+    }
+    var s = t.Module, a = (t.XHR, t.utilities), l = a.get_type, u = (a.UID, {}), f = c(), p = function() {}, h = {}, d = {
+        transport: h,
+        fetch_module: n,
+        fetch_resources: r
+    };
+    t.get_module = o, t.api = d;
+}(MAD, window, document), function(t) {
+    function e(t, e, c) {
+        return new XHR({
+            url: "mad/module/" + t,
+            callback: e || s,
+            callback_context: c,
+            before_send: n,
+            succeeded: r,
+            failed: o,
+            completed: i
+        });
+    }
+    function n() {
+        console.log("Fetching [" + this.url + "]");
+    }
+    function r(t) {
+        if (!t) throw "WARNING: Empty response from [" + this.url + "]";
+        var e;
+        try {
+            e = new Function("return (" + t + ")")();
+        } catch (t) {
             throw t;
         }
-        function o() {
-            console.log("fetched module: ", this.module_id);
-        }
-        return t;
-    }(), g = {
-        web: y
-    }, v = {
-        transport: g,
-        fetch_module: i,
-        fetch_resources: u
+        var n = e.exception;
+        return n ? (console.log("WARNING: " + n), null) : void this.callback.apply(this.callback_context, e);
+    }
+    function o(t) {
+        console.log("WARNING: Fetching failed [" + this.url + "]", t);
+    }
+    function i() {
+        console.log("Fetch completed [" + this.url + "]");
+    }
+    function c(t, e, c, a) {
+        var l = (e.templates || [], e.styles || []), u = e.components || [], f = "templates=" + e.templates.join(",") + "&styles=" + l.join(",") + "&components=" + u.join(",");
+        new XHR({
+            url: "mad/module/" + id + "/resources",
+            callback: c || s,
+            callback_context: a,
+            data: f,
+            before_send: n,
+            succeeded: r,
+            failed: o,
+            completed: i
+        });
+    }
+    var s = function() {};
+    t.api.transport.web = {
+        fetch_module: e,
+        fetch_resources: c
     };
-    t.get_module = n, t.get_resources = r, t.api = v;
-}(MAD, window, document);
+}(MAD);

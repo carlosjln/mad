@@ -1,4 +1,5 @@
 ( function ( MAD ) {
+	var do_nothing = function () { };
 
 	var utilities = MAD.utilities;
 	var copy = utilities.copy;
@@ -10,7 +11,7 @@
 
 	var data_storage = {};
 
-	function resource_collection( module_id ) {
+	function resource_collection( module ) {
 		var oid = set_oid( this );
 
 		this.templates = {};
@@ -18,67 +19,88 @@
 		this.components = {};
 
 		data_storage[ oid ] = {
-			module_id: module_id
+			module: module
 		};
 	}
 
 	resource_collection.prototype = {
 		constructor: resource_collection,
 
-		update: function ( resources ) {
+		update: function ( resources, override ) {
 			if( get_type( resources ) !== 'object' ) {
 				return;
 			};
 
-			copy( resources.templates, this.templates, true );
+			copy( resources.templates, this.templates, !override );
 			initialize_styles( this.styles, resources.styles );
 			initialize_components( this.components, resources.components );
+
+			return this;
 		},
 
-		get: function ( resources, callback, context ) {
-			var module_id = data_storage[ this.oid ].module_id
-			return MAD.get_resources( module_id, resources, callback, context );
+		get: function ( types, callback, force_update ) {
+			var instance_data = data_storage[ this.oid ];
+			var module = instance_data.module;
 
-			// var query = '';
+			var templates;
+			var styles;
+			var components;
 
-			// for( var resource in resources ) {
-			// 	if( resources.hasOwnProperty( resource ) ) {
-			// 		query += ( query ? '&' : '' ) + encodeURIComponent( resource ) + '=' + encodeURIComponent( resources[ resource ].join( '|' ) );
-			// 	}
-			// }
+			if( force_update ) {
+				templates = types.templates;
+				styles = types.styles;
+				components = types.components;
+			} else {
+				templates = get_undefined( this.templates, types.templates );
+				styles = get_undefined( this.styles, types.styles );
+				components = get_undefined( this.components, types.components );
+			}
 
-			// new XHR( {
-			// 	url: 'mad/module/' + this.module_id + '/resources',
-			// 	data: query,
+			var resources = {
+				templates: templates,
+				styles: styles,
+				components: components
+			};
 
-			// 	context: {
-			// 		collection: this,
-			// 		callback: callback || do_nothing
-			// 	},
+			var context = {
+				callback: callback,
+				collection: this
+			};
 
-			// 	succeeded: succeeded
-			// });
+			return MAD.api.fetch_resources( module.id, resources, fetch_resources_callback, context );
 		}
 	};
 
-	function succeeded( reply ) {
-		this.update( reply.resources );
-
-		try {
-			this.callback.call( this );
-		} catch( exception ) {
-			throw exception;
-		}
+	// GET RESOURCES
+	function fetch_resources_callback( data ) {
+		this.callback.call( this.collection.update( data, true ) );
 	}
+
+	// function succeeded( reply ) {
+	// 	this.update( reply.resources );
+
+	// 	try {
+	// 		this.callback.call( this );
+	// 	} catch( exception ) {
+	// 		throw exception;
+	// 	}
+	// }
 
 	function initialize_styles( collection, new_styles ) {
 		var css;
 		var element;
+		var current;
 
 		for( var item in new_styles ) {
 			css = ( new_styles[ item ] || '' ).trim();
 
 			if( new_styles.hasOwnProperty( item ) && ( element = create_style( css ) ) ) {
+				current = collection[ item ];
+
+				if( current ) {
+					current.parentNode.removeChild( current );
+				}
+
 				collection[ item ] = element;
 			}
 		}
@@ -109,7 +131,25 @@
 		}
 	}
 
-	function do_nothing() { }
+	function get_undefined( object, properties ) {
+		if( !properties ) {
+			return [];
+		}
+
+		var missing = [];
+		var index = properties.length;
+		var property;
+
+		while( index-- ) {
+			property = properties[ index ];
+
+			if( !object[ property ] ) {
+				missing.add( property );
+			}
+		}
+
+		return missing;
+	}
 
 	MAD.ResourceCollection = resource_collection;
 })( MAD );

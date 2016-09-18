@@ -21,16 +21,15 @@ let xhr = Path.join( src_directory, 'xhr.js' );
 let resource_collection = Path.join( src_directory, 'resource_collection.js' );
 let mod = Path.join( src_directory, 'module.js' );
 let api = Path.join( src_directory, 'api.js' );
+let web_transport = Path.join( src_directory, 'web_transport.js' );
 
-let files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, api ];
+let files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, api, web_transport ];
 
 let package_json = JSON.parse( FS.readFileSync( 'package.json', 'utf8' ) );
 let version = package_json.version;
 let write_flags = { 'flags': 'w+' };
 
 function build( files, output, options ) {
-	// console.log( 'MINIFYING:' + files.join( ', ' ) );
-
 	try {
 		let minified = UglifyJS.minify( files, options );
 

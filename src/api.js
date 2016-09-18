@@ -10,91 +10,8 @@
 	var modules_collection = {};
 	var current_platform = get_platform();
 
-	var request_context = ( function () {
-		var items = [];
-
-		function add() {
-			var id = UID();
-			var data = {}
-		}
-
-		function remove() {
-
-		}
-
-		function find() {
-
-		}
-
-		return {
-			add: add,
-			remove: remove,
-			find: find
-		};
-	})();
-
 	var do_nothing = function () { };
-
-	var web_transport = ( function () {
-		function request( id, callback ) {
-			new XHR( {
-				url: 'mad/module/' + id,
-
-				module_id: id,
-				callback: callback || do_nothing,
-
-				before: before,
-				succeeded: succeeded,
-				failed: failed,
-				completed: completed
-			});
-		}
-
-		function before() {
-			if( DEBUG ) {
-				console.log( 'fetching module: ', this.module_id );
-			}
-		}
-
-		function succeeded( reply ) {
-			if( !reply ) {
-				return console.log( 'WARNING: Module not loaded.' );
-			}
-
-			var response;
-			var exception;
-
-			try {
-				response = new Function( 'return (' + reply + ')' )();
-			} catch( e ) {
-				exception = e;
-			}
-
-			exception = exception || response.exception;
-
-			if( exception ) {
-				return console.log( 'WARNING: ' + exception );
-			}
-
-			this.callback.apply( this, response );
-		}
-
-		function failed( exception ) {
-			throw exception;
-		}
-
-		function completed() {
-			if( DEBUG ) {
-				console.log( 'fetched module: ', this.module_id );
-			}
-		}
-
-		return request;
-	})();
-
-	var transport = {
-		'web': web_transport
-	};
+	var transport = {};
 
 	var api = {
 		transport: transport,
@@ -102,6 +19,15 @@
 		fetch_resources: fetch_resources
 	};
 
+	function fetch_module( id, callback, context ) {
+		return transport[ current_platform ].fetch_module( id, callback, context );
+	}
+
+	function fetch_resources( module_id, types, callback, context ) {
+		return transport[ current_platform ].fetch_resources( module_id, types, callback, context );
+	}
+
+	// GET MODULE
 	function get_module( id, callback, params ) {
 		var typeof_callback = get_type( callback );
 
@@ -122,48 +48,17 @@
 			return module;
 		}
 
-		fetch_module( id, callback, params );
-		return null;
-	}
-
-	function get_resources( module_id, resources, callback, force_update ) {
-		if( get_type( callback ) === 'boolean' ) {
-			force_update = callback;
-			callback = do_nothing;
-		}
-
-		/*
-			resources = {
-				templates: ['']
-				styles: ['']
-				components: ['']
-			}
-		*/
-
-		console.log( 'fetching resources', resources );
-	}
-
-	function get_platform() {
-		if( typeof window !== 'undefined' && window.process && window.process.type === "renderer" ) {
-			return 'electron';
-		}
-
-		return 'web';
-	}
-
-	function fetch_module( id, callback, params ) {
-		var request = transport[ current_platform ] || do_nothing;
 		var context = {
 			id: id,
 			callback: callback,
 			params: params
 		};
 
-		request( id, fetch_module_completed, context );
+		fetch_module( id, fetch_module_callback, context );
 	}
 
-	function fetch_module_completed( data ) {
-		var id = this.params;
+	function fetch_module_callback( data ) {
+		var id = this.id;
 		var callback = this.callback;
 		var params = this.params;
 
@@ -175,24 +70,16 @@
 		}
 	}
 
-	function fetch_resources( module_id, resources, callback, params ) {
-		var request = transport[ current_platform ] || do_nothing;
-		var context = {
-			id: id,
-			callback: callback,
-			params: params
-		};
+	// LOCAL UTILITIES
+	function get_platform() {
+		if( typeof window !== 'undefined' && window.process && window.process.type === "renderer" ) {
+			return 'electron';
+		}
 
-
-	}
-
-	function fetch_resources_completed( data ) {
-		console.log( this );
+		return 'web';
 	}
 
 	MAD.get_module = get_module;
-	MAD.get_resources = get_resources;
-
 	MAD.api = api;
 
 })( MAD, window, document );
