@@ -29,9 +29,9 @@
 
 	// GET MODULE
 	function get_module( id, callback, params ) {
-		var typeof_callback = get_type( callback );
+		callback = callback || do_nothing;
 
-		if( typeof_callback !== 'function' ) {
+		if( get_type( callback ) !== 'function' ) {
 			params = callback;
 			callback = do_nothing;
 		}
@@ -43,8 +43,9 @@
 		var module = modules_collection[ id ];
 
 		if( module ) {
-			module.initialize.apply( module, params );
+			module.main.apply( module, params );
 			callback.apply( module, params );
+
 			return module;
 		}
 
@@ -66,6 +67,8 @@
 
 		if( module ) {
 			modules_collection[ id ] = module;
+
+			module.main.apply( module, params );
 			callback.apply( module, params );
 		}
 	}
