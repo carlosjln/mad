@@ -2,7 +2,7 @@
 	"name": "mad",
 	"version": "1.0.0",
 	"description": "Modular Aplication Development",
-	"main": "",
+	"main": "index.js",
 	"dependencies": {},
 	"devDependencies": {
 		"fs-extra": "^0.30.0",

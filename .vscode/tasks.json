@@ -1,17 +1,28 @@
 {
-	"version": "0.1.0",
+	"version": "2.0.0",
 	"windows": {
 		"command": "C:\\Program Files\\nodejs\\node.exe"
 	},
 	"linux": {
 		"command": "/usr/bin/node"
 	},
-	"isShellCommand": true,
-	"suppressTaskName": true,
-	"isBuildCommand": true,
-	"args": [
-		"${workspaceRoot}\\build.js",
-		"${workspaceRoot}"
-	],
-	"showOutput": "silent"
+	"tasks": [
+		{
+			"taskName": "Minify",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				".\\build_tasks\\minify.js",
+				"${workspaceRoot}"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"echo": true
+			},
+			"promptOnClose": true,
+			"problemMatcher": "$jshint"
+		}
+	]
 }

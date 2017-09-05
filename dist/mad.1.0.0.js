@@ -28,7 +28,7 @@ window.MAD = window.MAD || {
     return e ? t[e - 1] : null;
 }, function(t) {
     function e(t, n, r) {
-        var o, i, c = l(t);
+        var o, i, c = u(t);
         if (r = r === !0, "date" === c) return n = new Date(), n.setTime(t.getTime()), n;
         if ("array" === c && r === !1) {
             var s = t.length;
@@ -51,10 +51,10 @@ window.MAD = window.MAD || {
         return i;
     }
     function o(t) {
-        for (var e, n, r, o, c, s, a, l = u, f = i(t), p = f.length, h = 0, d = ""; h < p; ) e = f.charCodeAt(h++), 
+        for (var e, n, r, o, c, s, a, u = l, f = i(t), p = f.length, h = 0, d = ""; h < p; ) e = f.charCodeAt(h++), 
         n = f.charCodeAt(h++), r = f.charCodeAt(h++), o = e >> 2, c = (3 & e) << 4 | n >> 4, 
         s = (15 & n) << 2 | r >> 6, a = 63 & r, isNaN(n) ? s = a = 64 : isNaN(r) && (a = 64), 
-        d = d + l.charAt(o) + l.charAt(c) + l.charAt(s) + l.charAt(a);
+        d = d + u.charAt(o) + u.charAt(c) + u.charAt(s) + u.charAt(a);
         return d;
     }
     function i(t) {
@@ -76,7 +76,7 @@ window.MAD = window.MAD || {
     function a(t) {
         return t ? t.oid = f("OID") : null;
     }
-    var l = function() {
+    var u = function() {
         function t(t) {
             var r = typeof t;
             return null === t ? "null" : "object" === r || "function" === r ? e[n.call(t)] || "object" : r;
@@ -93,7 +93,7 @@ window.MAD = window.MAD || {
             "[object Error]": "error"
         }, n = e.toString;
         return t;
-    }(), u = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", f = function() {
+    }(), l = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", f = function() {
         function t(t) {
             return (t || "") + ++e;
         }
@@ -101,7 +101,7 @@ window.MAD = window.MAD || {
         return t;
     }();
     t.utilities = {
-        get_type: l,
+        get_type: u,
         copy: e,
         merge: n,
         filter: r,
@@ -173,7 +173,7 @@ window.MAD = window.MAD || {
     }, t.XHR = e;
 }(MAD), function(t) {
     function e(t) {
-        var e = l(this);
+        var e = u(this);
         this.templates = {}, this.styles = {}, this.components = {}, f[e] = {
             module: t
         };
@@ -183,7 +183,7 @@ window.MAD = window.MAD || {
     }
     function r(t, e) {
         var n, r, o;
-        for (var i in e) n = (e[i] || "").trim(), e.hasOwnProperty(i) && (r = u(n)) && (o = t[i], 
+        for (var i in e) n = (e[i] || "").trim(), e.hasOwnProperty(i) && (r = l(n)) && (o = t[i], 
         o && o.parentNode.removeChild(o), t[i] = r);
     }
     function o(t, e) {
@@ -199,7 +199,7 @@ window.MAD = window.MAD || {
         for (var n, r = [], o = e.length; o--; ) n = e[o], t[n] || r.add(n);
         return r;
     }
-    var c = t.utilities, s = c.copy, a = c.get_type, l = c.set_oid, u = (t.XHR, t.html.create_style), f = {};
+    var c = t.utilities, s = c.copy, a = c.get_type, u = c.set_oid, l = (t.XHR, t.html.create_style), f = {};
     e.prototype = {
         constructor: e,
         update: function(t, e) {
@@ -207,7 +207,7 @@ window.MAD = window.MAD || {
             o(this.components, t.components), this;
         },
         get: function(e, r, o) {
-            var c, s, a, l = f[this.oid], u = l.module;
+            var c, s, a, u = f[this.oid], l = u.module;
             o ? (c = e.templates, s = e.styles, a = e.components) : (c = i(this.templates, e.templates), 
             s = i(this.styles, e.styles), a = i(this.components, e.components));
             var p = {
@@ -218,7 +218,7 @@ window.MAD = window.MAD || {
                 callback: r,
                 collection: this
             };
-            return t.api.fetch_resources(u.id, p, n, h);
+            return t.api.fetch_resources(l.id, p, n, h);
         }
     }, t.ResourceCollection = e;
 }(MAD), function(t) {
@@ -249,8 +249,8 @@ window.MAD = window.MAD || {
         return h[f].fetch_resources(t, e, n, r);
     }
     function o(t, e, r) {
-        e = e || p, "function" !== l(e) && (r = e, e = p), r = void 0 === r ? [] : r, r = "array" === l(r) ? r : [ r ];
-        var o = u[t];
+        e = e || p, "function" !== u(e) && (r = e, e = p), r = void 0 === r ? [] : r, r = "array" === u(r) ? r : [ r ];
+        var o = l[t];
         if (o) return o.main.apply(o, r), e.apply(o, r), o;
         var c = {
             id: t,
@@ -260,15 +260,13 @@ window.MAD = window.MAD || {
         n(t, i, c);
     }
     function i(t) {
-        var e = this.id, n = this.callback, r = this.params;
-        console.log(t);
-        var o = s.initialize(t, r);
-        o && (u[e] = o, o.main.apply(o, r), n.apply(o, r));
+        var e = this.id, n = this.callback, r = this.params, o = s.initialize(t, r);
+        o && (l[e] = o, o.main.apply(o, r), n.apply(o, r));
     }
     function c() {
         return "undefined" != typeof e && e.process && "renderer" === e.process.type ? "electron" : "web";
     }
-    var s = t.Module, a = (t.XHR, t.utilities), l = a.get_type, u = (a.UID, {}), f = c(), p = function() {}, h = {}, d = {
+    var s = t.Module, a = (t.XHR, t.utilities), u = a.get_type, l = (a.UID, {}), f = c(), p = function() {}, h = {}, d = {
         transport: h,
         fetch_module: n,
         fetch_resources: r
@@ -307,7 +305,7 @@ window.MAD = window.MAD || {
         console.log("Fetch completed [" + this.url + "]");
     }
     function c(t, e, c, a) {
-        var l = (e.templates || [], e.styles || []), u = e.components || [], f = "templates=" + e.templates.join(",") + "&styles=" + l.join(",") + "&components=" + u.join(",");
+        var u = (e.templates || [], e.styles || []), l = e.components || [], f = "templates=" + e.templates.join(",") + "&styles=" + u.join(",") + "&components=" + l.join(",");
         new XHR({
             url: "mad/module/" + id + "/resources",
             callback: c || s,

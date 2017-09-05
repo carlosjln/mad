@@ -10,7 +10,7 @@ let args = process.argv.slice( 2 );
 let workspace_directory = args[ 0 ];
 
 let src_directory = Path.join( workspace_directory, 'src' );
-let build_directory = Path.join( workspace_directory, 'build' );
+let target_directory = Path.join( workspace_directory, 'dist' );
 
 // SOURCE FILES
 let mad = Path.join( src_directory, 'mad.js' );
@@ -23,22 +23,11 @@ let mod = Path.join( src_directory, 'module.js' );
 let api = Path.join( src_directory, 'api.js' );
 let web_transport = Path.join( src_directory, 'web_transport.js' );
 
-let files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, api, web_transport ];
+let target_files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, api, web_transport ];
 
 let package_json = JSON.parse( FS.readFileSync( 'package.json', 'utf8' ) );
 let version = package_json.version;
 let write_flags = { 'flags': 'w+' };
-
-function build( files, output, options ) {
-	try {
-		let minified = UglifyJS.minify( files, options );
-
-		FS.writeFileSync( output, minified.code, write_flags );
-		console.log( "OUTPUT: " + output );
-	} catch( exception ) {
-		return console.log( exception );
-	}
-}
 
 let dev_options = {
 	//warnings: true,
@@ -79,6 +68,16 @@ let pro_options = {
 	}
 };
 
-build( files, Path.join( build_directory, 'mad.' + version + '.js' ), dev_options );
+function build( files, target_file, options ) {
+	try {
+		let output = UglifyJS.minify( files, options );
+		FS.writeFileSync( target_file, output.code, write_flags );
+		console.log( '[' + files.length + ']' + " Files minified into: " + target_file );
+	} catch( exception ) {
+		return console.log( exception );
+	}
+}
+
+build( target_files, Path.join( target_directory, 'mad.' + version + '.js' ), dev_options );
 console.log( '-' );
-build( files, Path.join( build_directory, 'mad.min.' + version + '.js' ), pro_options );
+build( target_files, Path.join( target_directory, 'mad.min.' + version + '.js' ), pro_options );
