@@ -10,7 +10,8 @@
 		"uglify-js": "^2.7.3"
 	},
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "node .\\build_tasks\\minify.js"
 	},
 	"repository": {
 		"type": "git",

@@ -8,12 +8,11 @@
 	},
 	"tasks": [
 		{
-			"taskName": "Minify",
+			"taskName": "Build",
 			"type": "shell",
 			"command": "node",
 			"args": [
-				".\\build_tasks\\minify.js",
-				"${workspaceRoot}"
+				".\\build_tasks\\minify.js"
 			],
 			"group": "build",
 			"presentation": {
