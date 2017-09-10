@@ -10,18 +10,18 @@ const UglifyJS = require( 'uglify-js' );
 let args = process.argv.slice( 2 );
 let workspace_directory = args[ 0 ] || Path.resolve( __dirname, '..' );
 
-let src_directory = Path.join( workspace_directory, 'src' );
+let source_directory = Path.join( workspace_directory, 'src' );
 
 // SOURCE FILES
-let mad = Path.join( src_directory, 'mad.js' );
-let polyfils = Path.join( src_directory, 'polyfils.js' );
-let utilities = Path.join( src_directory, 'utilities.js' );
-let html = Path.join( src_directory, 'html.js' );
-let xhr = Path.join( src_directory, 'xhr.js' );
-let resource_collection = Path.join( src_directory, 'resource_collection.js' );
-let mod = Path.join( src_directory, 'module.js' );
-let api = Path.join( src_directory, 'api.js' );
-let web_transport = Path.join( src_directory, 'web_transport.js' );
+let mad = Path.join( source_directory, 'mad.js' );
+let polyfils = Path.join( source_directory, 'polyfils.js' );
+let utilities = Path.join( source_directory, 'utilities.js' );
+let html = Path.join( source_directory, 'html.js' );
+let xhr = Path.join( source_directory, 'xhr.js' );
+let resource_collection = Path.join( source_directory, 'resource_collection.js' );
+let mod = Path.join( source_directory, 'module.js' );
+let api = Path.join( source_directory, 'api.js' );
+let web_transport = Path.join( source_directory, 'web_transport.js' );
 
 let src_files = [ mad, polyfils, utilities, html, xhr, resource_collection, mod, api, web_transport ];
 
