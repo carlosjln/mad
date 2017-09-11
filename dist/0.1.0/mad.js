@@ -12,7 +12,7 @@
  * @license MIT
  */
 window.MAD = window.MAD || {
-    version: "1.0.0"
+    version: "0.1.0"
 }, String.prototype.trim || (String.prototype.trim = function() {
     return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
 }), Array.prototype.add = function(t) {
