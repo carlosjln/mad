@@ -1,6 +1,6 @@
-( function ( MAD ) {
+( function ( mad ) {
 
-	var ResourceCollection = MAD.ResourceCollection;
+	var ResourceCollection = mad.ResourceCollection;
 
 	function module( id ) {
 		if( typeof id !== 'string' ) {
@@ -41,7 +41,7 @@
 			instance.resources.update( resources );
 
 			// EVALUATE THE SOURCE CODE AND MERGE IT WITH THE NEW MODULE INSTANCE 
-			( new Function( 'return (' + source + ');' )() ).call( instance, MAD );
+			( new Function( 'return (' + source + ');' )() ).call( instance, mad );
 
 		} catch( exception ) {
 			if( DEBUG ) {
@@ -54,6 +54,6 @@
 		return instance;
 	};
 
-	MAD.Module = module;
+	mad.Module = module;
 
-})( MAD );
+})( window.mad );

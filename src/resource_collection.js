@@ -1,13 +1,13 @@
-( function ( MAD ) {
+( function ( mad ) {
 	var do_nothing = function () { };
 
-	var utilities = MAD.utilities;
+	var utilities = mad.utilities;
 	var copy = utilities.copy;
 	var get_type = utilities.get_type;
 	var set_oid = utilities.set_oid;
 
-	var XHR = MAD.XHR;
-	var create_style = MAD.html.create_style;
+	var XHR = mad.XHR;
+	var create_style = mad.html.create_style;
 
 	var data_storage = {};
 
@@ -67,7 +67,7 @@
 				collection: this
 			};
 
-			return MAD.api.fetch_resources( module.id, resources, fetch_resources_callback, context );
+			return mad.api.fetch_resources( module.id, resources, fetch_resources_callback, context );
 		}
 	};
 
@@ -75,16 +75,6 @@
 	function fetch_resources_callback( data ) {
 		this.callback.call( this.collection.update( data, true ) );
 	}
-
-	// function succeeded( reply ) {
-	// 	this.update( reply.resources );
-
-	// 	try {
-	// 		this.callback.call( this );
-	// 	} catch( exception ) {
-	// 		throw exception;
-	// 	}
-	// }
 
 	function initialize_styles( collection, new_styles ) {
 		var css;
@@ -151,5 +141,5 @@
 		return missing;
 	}
 
-	MAD.ResourceCollection = resource_collection;
-})( MAD );
+	mad.ResourceCollection = resource_collection;
+})( window.mad );

@@ -1,5 +1,6 @@
-( function ( MAD ) {
+( function ( mad ) {
 	var do_nothing = function () { };
+	var XHR = mad.XHR;
 
 	// MODULE RETRIEVAL
 	function fetch_module( id, callback, context ) {
@@ -13,7 +14,7 @@
 			succeeded: fetch_module_succeeded,
 			failed: fetch_module_failed,
 			completed: fetch_module_completed
-		});
+		} );
 	}
 
 	function before_send() {
@@ -80,11 +81,11 @@
 			succeeded: fetch_module_succeeded,
 			failed: fetch_module_failed,
 			completed: fetch_module_completed
-		});
+		} );
 	}
 
-	MAD.api.transport[ 'web' ] = {
+	mad.api.transport[ 'web' ] = {
 		fetch_module: fetch_module,
 		fetch_resources: fetch_resources
 	};
-})( MAD );
+} )( window.mad );

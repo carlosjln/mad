@@ -1,5 +1,5 @@
-( function ( MAD ) {
-	var utilities = MAD.utilities;
+( function ( mad ) {
+	var utilities = mad.utilities;
 
 	var get_type = utilities.get_type;
 	var copy = utilities.copy;
@@ -108,9 +108,9 @@
 			this.failed.call( context, e );
 		}
 
-		this.completed.call( thcontextis, response_text, exception );
+		this.completed.call( context, response_text, exception );
 	}
 
-	MAD.XHR = xhr;
+	mad.XHR = xhr;
 
-})( MAD );
+})( window.mad );

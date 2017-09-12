@@ -1,4 +1,4 @@
-( function ( MAD ) {
+( function ( mad ) {
 
 	// OBJECT TYPE DETECTION
 	// TAKEN FROM https://github.com/carlosjln/epic
@@ -32,7 +32,7 @@
 		}
 
 		return type;
-	})();
+	} )();
 
 	// COPYCAT ENGINE B-)
 	// TAKEN FROM https://github.com/carlosjln/epic
@@ -193,31 +193,34 @@
 		return params.join( "&" );
 	}
 
-	var UID = ( function () {
+	var generate_uid = ( function () {
 		// UNIQUE IDENTIFIER GENERATOR
 
 		var seed = ( new Date() ).getTime();
 
 		function uid( prefix ) {
-			return ( prefix || '' ) + ++seed;
+			return ( prefix || '' ) + ( ++seed );
 		}
 
 		return uid;
-	})();
+	} )();
 
-	function ObjectID( ) {
-		return UID( 'OID' );
-	}
 
-	function set_oid( object ) {
+	function set_oid( object, override ) {
 		if( !object ) {
 			return null;
 		}
 
-		return object.oid = UID( 'OID' );
+		var current_oid = object.oid;
+
+		if( !!current_oid && !override ) {
+			return current_oid;
+		}
+
+		return object.oid = generate_uid( 'OID' );
 	}
 
-	MAD.utilities = {
+	mad.utilities = {
 		get_type: get_type,
 		copy: copy,
 		merge: merge,
@@ -225,9 +228,8 @@
 		encode_base64: encode_base64,
 		encode_utf8: encode_utf8,
 		serialize: serialize,
-		UID: UID,
-		ObjectID: ObjectID,
+		generate_uid: generate_uid,
 		set_oid: set_oid,
 	};
 
-})( MAD );
+} )( window.mad );

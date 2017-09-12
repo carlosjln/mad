@@ -11,7 +11,7 @@
  * 
  * @license MIT
  */
-window.MAD = window.MAD || {
+window.mad = window.mad || {
     version: "0.1.0"
 }, String.prototype.trim || (String.prototype.trim = function() {
     return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
@@ -28,16 +28,16 @@ window.MAD = window.MAD || {
     return e ? t[e - 1] : null;
 }, function(t) {
     function e(t, n, r) {
-        var o, i, c = u(t);
+        var o, i, c = s(t);
         if (r = r === !0, "date" === c) return n = new Date(), n.setTime(t.getTime()), n;
         if ("array" === c && r === !1) {
-            var s = t.length;
-            for (n = void 0 === n ? [] : n; s--; ) n[s] = e(t[s], n[s], r);
+            var a = t.length;
+            for (n = void 0 === n ? [] : n; a--; ) n[a] = e(t[a], n[a], r);
             return n;
         }
         if ("object" === c) {
             n = void 0 === n ? {} : n;
-            for (var a in t) t.hasOwnProperty(a) && (o = t[a], i = n[a], n[a] = e(o, i, r));
+            for (var u in t) t.hasOwnProperty(u) && (o = t[u], i = n[u], n[u] = e(o, i, r));
             return n;
         }
         return r && void 0 !== n ? n : t;
@@ -51,11 +51,11 @@ window.MAD = window.MAD || {
         return i;
     }
     function o(t) {
-        for (var e, n, r, o, c, s, a, u = l, f = i(t), p = f.length, h = 0, d = ""; h < p; ) e = f.charCodeAt(h++), 
-        n = f.charCodeAt(h++), r = f.charCodeAt(h++), o = e >> 2, c = (3 & e) << 4 | n >> 4, 
-        s = (15 & n) << 2 | r >> 6, a = 63 & r, isNaN(n) ? s = a = 64 : isNaN(r) && (a = 64), 
-        d = d + u.charAt(o) + u.charAt(c) + u.charAt(s) + u.charAt(a);
-        return d;
+        for (var e, n, r, o, c, a, s, l = u, f = i(t), d = f.length, p = 0, h = ""; p < d; ) e = f.charCodeAt(p++), 
+        n = f.charCodeAt(p++), r = f.charCodeAt(p++), o = e >> 2, c = (3 & e) << 4 | n >> 4, 
+        a = (15 & n) << 2 | r >> 6, s = 63 & r, isNaN(n) ? a = s = 64 : isNaN(r) && (s = 64), 
+        h = h + l.charAt(o) + l.charAt(c) + l.charAt(a) + l.charAt(s);
+        return h;
     }
     function i(t) {
         for (var e, n = t.replace(/\r\n/g, "\n"), r = n.length, o = 0, i = ""; r--; ) e = n.charCodeAt(o++), 
@@ -70,13 +70,12 @@ window.MAD = window.MAD || {
         o.add("object" == typeof r ? c(r, n) : encodeURIComponent(n) + "=" + encodeURIComponent(r)));
         return o.join("&");
     }
-    function s() {
-        return f("OID");
+    function a(t, e) {
+        if (!t) return null;
+        var n = t.oid;
+        return n && !e ? n : t.oid = l("OID");
     }
-    function a(t) {
-        return t ? t.oid = f("OID") : null;
-    }
-    var u = function() {
+    var s = function() {
         function t(t) {
             var r = typeof t;
             return null === t ? "null" : "object" === r || "function" === r ? e[n.call(t)] || "object" : r;
@@ -93,7 +92,7 @@ window.MAD = window.MAD || {
             "[object Error]": "error"
         }, n = e.toString;
         return t;
-    }(), l = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", f = function() {
+    }(), u = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", l = function() {
         function t(t) {
             return (t || "") + ++e;
         }
@@ -101,18 +100,17 @@ window.MAD = window.MAD || {
         return t;
     }();
     t.utilities = {
-        get_type: u,
+        get_type: s,
         copy: e,
         merge: n,
         filter: r,
         encode_base64: o,
         encode_utf8: i,
         serialize: c,
-        UID: f,
-        ObjectID: s,
+        generate_uid: l,
         set_oid: a
     };
-}(MAD), function(t, e) {
+}(window.mad), function(t, e) {
     function n(t) {
         if (!t) return null;
         var n = e.createElement("style"), r = n.styleSheet;
@@ -127,11 +125,11 @@ window.MAD = window.MAD || {
         create_style: n,
         register_tags: r
     };
-}(MAD, document), function(t) {
+}(window.mad, document), function(t) {
     function e(t, r) {
         if (this instanceof e == !1) return new e(t, r);
         "object" == typeof t && (r = t, t = r.url), o(r, this);
-        var i = this.transport = s(), c = this;
+        var i = this.transport = a(), c = this;
         i.onreadystatechange = function() {
             n.call(c);
         }, this.start();
@@ -149,9 +147,9 @@ window.MAD = window.MAD || {
         } catch (t) {
             o = t, this.failed.call(c, t);
         }
-        this.completed.call(thcontextis, i, o);
+        this.completed.call(c, i, o);
     }
-    var r = t.utilities, o = (r.get_type, r.copy), i = r.serialize, c = function() {}, s = window.XMLHttpRequest ? function() {
+    var r = t.utilities, o = (r.get_type, r.copy), i = r.serialize, c = function() {}, a = window.XMLHttpRequest ? function() {
         return new XMLHttpRequest();
     } : function() {
         return new ActiveXObject("Microsoft.XMLHTTP");
@@ -171,7 +169,7 @@ window.MAD = window.MAD || {
             this;
         }
     }, t.XHR = e;
-}(MAD), function(t) {
+}(window.mad), function(t) {
     function e(t) {
         var e = u(this);
         this.templates = {}, this.styles = {}, this.components = {}, f[e] = {
@@ -199,29 +197,29 @@ window.MAD = window.MAD || {
         for (var n, r = [], o = e.length; o--; ) n = e[o], t[n] || r.add(n);
         return r;
     }
-    var c = t.utilities, s = c.copy, a = c.get_type, u = c.set_oid, l = (t.XHR, t.html.create_style), f = {};
+    var c = t.utilities, a = c.copy, s = c.get_type, u = c.set_oid, l = (t.XHR, t.html.create_style), f = {};
     e.prototype = {
         constructor: e,
         update: function(t, e) {
-            if ("object" === a(t)) return s(t.templates, this.templates, !e), r(this.styles, t.styles), 
+            if ("object" === s(t)) return a(t.templates, this.templates, !e), r(this.styles, t.styles), 
             o(this.components, t.components), this;
         },
         get: function(e, r, o) {
-            var c, s, a, u = f[this.oid], l = u.module;
-            o ? (c = e.templates, s = e.styles, a = e.components) : (c = i(this.templates, e.templates), 
-            s = i(this.styles, e.styles), a = i(this.components, e.components));
-            var p = {
+            var c, a, s, u = f[this.oid], l = u.module;
+            o ? (c = e.templates, a = e.styles, s = e.components) : (c = i(this.templates, e.templates), 
+            a = i(this.styles, e.styles), s = i(this.components, e.components));
+            var d = {
                 templates: c,
-                styles: s,
-                components: a
-            }, h = {
+                styles: a,
+                components: s
+            }, p = {
                 callback: r,
                 collection: this
             };
-            return t.api.fetch_resources(l.id, p, n, h);
+            return t.api.fetch_resources(l.id, d, n, p);
         }
     }, t.ResourceCollection = e;
-}(MAD), function(t) {
+}(window.mad), function(t) {
     function e(t) {
         if ("string" != typeof t) throw "The module [id] must be a string.";
         this.id = t, this.resources = new n(this);
@@ -241,15 +239,15 @@ window.MAD = window.MAD || {
         }
         return c;
     }, t.Module = e;
-}(MAD), function(t, e) {
+}(window.mad), function(t, e) {
     function n(t, e, n) {
-        return h[f].fetch_module(t, e, n);
+        return p[f].fetch_module(t, e, n);
     }
     function r(t, e, n, r) {
-        return h[f].fetch_resources(t, e, n, r);
+        return p[f].fetch_resources(t, e, n, r);
     }
     function o(t, e, r) {
-        e = e || p, "function" !== u(e) && (r = e, e = p), r = void 0 === r ? [] : r, r = "array" === u(r) ? r : [ r ];
+        e = e || d, "function" !== u(e) && (r = e, e = d), r = void 0 === r ? [] : r, r = "array" === u(r) ? r : [ r ];
         var o = l[t];
         if (o) return o.main.apply(o, r), e.apply(o, r), o;
         var c = {
@@ -260,23 +258,24 @@ window.MAD = window.MAD || {
         n(t, i, c);
     }
     function i(t) {
-        var e = this.id, n = this.callback, r = this.params, o = s.initialize(t, r);
+        var e = this.id, n = this.callback, r = this.params, o = a.initialize(t, r);
         o && (l[e] = o, o.main.apply(o, r), n.apply(o, r));
     }
     function c() {
         return "undefined" != typeof e && e.process && "renderer" === e.process.type ? "electron" : "web";
     }
-    var s = t.Module, a = (t.XHR, t.utilities), u = a.get_type, l = (a.UID, {}), f = c(), p = function() {}, h = {}, d = {
-        transport: h,
+    var a = t.Module, s = (t.XHR, t.utilities), u = s.get_type, l = (s.generate_uid, 
+    {}), f = c(), d = function() {}, p = {}, h = {
+        transport: p,
         fetch_module: n,
         fetch_resources: r
     };
-    t.get_module = o, t.api = d;
-}(MAD, window, document), function(t) {
+    t.get_module = o, t.api = h;
+}(window.mad, window, document), function(t) {
     function e(t, e, c) {
-        return new XHR({
+        return new s({
             url: "mad/module/" + t,
-            callback: e || s,
+            callback: e || a,
             callback_context: c,
             before_send: n,
             succeeded: r,
@@ -304,22 +303,22 @@ window.MAD = window.MAD || {
     function i() {
         console.log("Fetch completed [" + this.url + "]");
     }
-    function c(t, e, c, a) {
-        var u = (e.templates || [], e.styles || []), l = e.components || [], f = "templates=" + e.templates.join(",") + "&styles=" + u.join(",") + "&components=" + l.join(",");
-        new XHR({
+    function c(t, e, c, u) {
+        var l = (e.templates || [], e.styles || []), f = e.components || [], d = "templates=" + e.templates.join(",") + "&styles=" + l.join(",") + "&components=" + f.join(",");
+        new s({
             url: "mad/module/" + id + "/resources",
-            callback: c || s,
-            callback_context: a,
-            data: f,
+            callback: c || a,
+            callback_context: u,
+            data: d,
             before_send: n,
             succeeded: r,
             failed: o,
             completed: i
         });
     }
-    var s = function() {};
+    var a = function() {}, s = t.XHR;
     t.api.transport.web = {
         fetch_module: e,
         fetch_resources: c
     };
-}(MAD);
+}(window.mad);

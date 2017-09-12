@@ -1,4 +1,4 @@
-( function ( MAD, document ) {
+( function ( mad, document ) {
 	var document_head = document.head || document.getElementsByTagName( 'head' )[ 0 ];
 
 	function create_style( css ) {
@@ -31,9 +31,9 @@
 		document.registerElement( tag );
 	}
 
-	MAD.html = {
+	mad.html = {
 		create_style: create_style,
 		register_tags: register_tags
 	};
 
-})( MAD, document );
+})( window.mad, document );

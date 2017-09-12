@@ -1,11 +1,11 @@
-( function ( MAD, window ) {
+( function ( mad, window ) {
 
-	var Module = MAD.Module;
-	var XHR = MAD.XHR;
+	var Module = mad.Module;
+	var XHR = mad.XHR;
 
-	var utilities = MAD.utilities;
+	var utilities = mad.utilities;
 	var get_type = utilities.get_type;
-	var UID = utilities.UID;
+	var generate_uid = utilities.generate_uid;
 
 	var modules_collection = {};
 	var current_platform = get_platform();
@@ -82,7 +82,7 @@
 		return 'web';
 	}
 
-	MAD.get_module = get_module;
-	MAD.api = api;
+	mad.get_module = get_module;
+	mad.api = api;
 
-})( MAD, window, document );
+})( window.mad, window, document );

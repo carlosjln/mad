@@ -12,6 +12,6 @@
  * @license MIT
  */
 
-window.MAD = window.MAD || {
+window.mad = window.mad || {
 	version: '0.1.0'
 };
